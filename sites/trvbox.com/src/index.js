@@ -14,7 +14,6 @@ const menu = () => {
 
 const search = () => {
   $('#search-btn').on('click', (e) => {
-    $(e.target).toggleClass('active');
     $('#search-form').slideToggle();
   });
 
@@ -51,8 +50,6 @@ const sticky = () => {
 }
 
 export default () => {
-  console.log('Ampify code here');
-
   menu();
   search();
   social();

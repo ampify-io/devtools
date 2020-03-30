@@ -53,6 +53,7 @@ const init = async () => {
           isParse: true,
           isAmpify: true,
           isRunPlugins: true,
+          isReload: true,
           type: 'ampify'
         }
       });

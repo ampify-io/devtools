@@ -4,7 +4,8 @@
     "projects/*"
   ],
   "scripts": {
-    "build": "yarn workspace extension build && yarn workspace @ampify/aquery build",
+    "build-extension": "yarn workspace extension build",
+    "build-aquery": "yarn workspace @ampify/aquery build",
     "server-start": "yarn workspace server start",
     "static-start": "yarn serve -p 2311"
   },
