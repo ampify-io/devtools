@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "workspaces": [
+    "projects/*"
+  ],
+  "scripts": {
+    "build": "yarn workspace extension build && yarn workspace @ampify/aquery build",
+    "server-start": "yarn workspace server start",
+    "static-start": "yarn serve -p 2311"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1",
+    "serve": "^11.3.0"
+  }
+}

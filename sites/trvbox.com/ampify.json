@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    {
+      "name": "trvbox.com",
+      "options": {}
+    }
+  ],
+
+  "dev": {
+    "paths": [
+      "http://localhost:2311/sites/trvbox.com/dist/trvbox.com.js"
+    ]
+  }
+}

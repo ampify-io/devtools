@@ -1,0 +1,17 @@
+{
+  "name": "extension",
+  "version": "0.0.1",
+  "main": "./src",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "trash extension/js",
+    "build": "webpack -d"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "trash-cli": "^3.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  }
+}

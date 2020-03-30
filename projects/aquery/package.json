@@ -1,0 +1,32 @@
+{
+  "name": "@ampify/aquery",
+  "version": "0.0.2",
+  "main": "./dist/aquery.js",
+  "module": "./src",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "trash dist",
+    "build-dev": "webpack -d",
+    "build": "webpack -p",
+    "test": "jest",
+    "prepublish": "yarn build",
+    "npm-publish": "yarn publish --access public"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "jest": "^24.9.0",
+    "jest-serializer-html": "^7.0.0",
+    "lodash.camelcase": "^4.3.0",
+    "trash-cli": "^3.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "@ampproject/toolbox-script-csp": "^2.0.0",
+    "nanoid": "^2.1.6"
+  },
+  "jest": {
+    "snapshotSerializers": [
+      "jest-serializer-html"
+    ]
+  }
+}

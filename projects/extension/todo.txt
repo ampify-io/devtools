@@ -1,0 +1,4 @@
+1. take block files in background from sites.js
+2. instead of latest.html generate a unique name inside /extesntions folder
+3. dont parse images if ampify: false
+4. do auto scroll

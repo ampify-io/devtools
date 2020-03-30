@@ -1,0 +1,15 @@
+{
+  "name": "trvbox.com",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "trash dist",
+    "build": "webpack -d"
+  },
+  "devDependencies": {
+    "trash-cli": "^3.0.0",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
+  }
+}

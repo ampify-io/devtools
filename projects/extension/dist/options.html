@@ -1,0 +1,114 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>Ampify Scraper Options</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-size: 0.9em;
+    }
+
+    .row {
+      padding: 10px;
+    }
+
+    .row label {
+      display: inline-block;
+      margin-right: 10px;
+      vertical-align: top;
+    }
+
+    #message {
+      padding: 20px;
+    }
+
+    textarea {
+      width: 500px;
+      height: 100px;
+    }
+
+    .ampify-json-list {
+      margin-top: 12px;
+    }
+
+      .ampify-json-list .item {
+        margin: 3px 0;
+      }
+
+      .ampify-json-list input {
+        margin-right: 8px;
+      }
+
+      .ampify-json-list .text {
+        position: relative;
+        top: -2px;
+      }
+
+      .ampify-json-list .close {
+        position: relative;
+        top: -2px;
+        left: -2px;
+        margin-right: 6px;
+        padding: 1px;
+        line-height: 10px;
+      }
+
+    .ampify-json-add {
+      margin-top: 8px;
+      padding-left: 6px;
+    }
+
+    .ampify-json-add input {
+      width: 300px;
+      margin-right: 5px;
+    }
+    </style>
+    
+    <script src="js/options.js"></script>
+</head>
+
+<body>
+  <div id="container" class="hidden">
+    <div class="row">
+      <label>Minify CSS: </label><input id="is-minify" type="checkbox" />
+    </div>
+
+    <div class="row">
+      <label>Ampify: </label><input id="is-ampify" type="checkbox" />
+    </div>
+
+    <div class="row">
+      <label>Auto Reload: </label><input id="is-reload" type="checkbox" />
+      <span id="reload-delay-container" hidden><label>(Delay: <input id="reload-delay" type="checkbox" />)</label></span>
+    </div>
+
+    <div class="row">
+      <label>Run plugins: </label><input id="is-run-plugins" type="checkbox" /> 
+      <span id="is-plugins-only-container" hidden><label>(Plugins only mode: <input id="is-plugins-only" type="checkbox" />)</label></span>
+    </div>
+
+    <hr />
+
+    <div class="row">
+      <label>Block urls: </label>
+      <textarea id="block-list"></textarea>
+    </div>
+
+    <hr />
+
+    <div class="row">
+      <label>Ampify JSON url: </label>
+      <div class="ampify-json-list" id="ampify-json-urls"></div>
+      <div class="ampify-json-add"><input id="add-url-inp" type="text" /><button id="add-url-btn">Add URL</button></div>
+    </div>
+
+    <div id="message"></div>
+  </div>
+</body>
+</html>
