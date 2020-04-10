@@ -6,7 +6,7 @@ const ajaxList = ({
   template,
   height,
   infinite = false
-}) => {
+}, $) => {
   const list = document.createElement('amp-list');
 
   list.id = randomId();
@@ -19,7 +19,9 @@ const ajaxList = ({
     list.setAttribute('load-more-bookmark', 'next');
   }
 
-  container.appendChild(list);
+  //clone container to detach any javascript that might alter the content
+  $(container).clone().html('').insertAfter(container).append(list);
+  $(container).remove();
   
   const tmpl = document.createElement('template');
 

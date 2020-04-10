@@ -1,4 +1,4 @@
-const create = ({container, items}) => {
+const create = ({container, items, controls}) => {
   const width = items[0].offsetWidth;
   const height = items[0].offsetHeight;
   const carousel = document.createElement('amp-carousel');
@@ -8,7 +8,7 @@ const create = ({container, items}) => {
   carousel.setAttribute('height', height);
   carousel.setAttribute('type', 'slides');
   carousel.setAttribute('loop', '');
-  carousel.setAttribute('controls', '');
+  if (controls) { carousel.setAttribute('controls', ''); }
 
   items.forEach(item => {
     const div = document.createElement('div');
@@ -25,7 +25,7 @@ export default ({
   slides,
   container
 }, $) => {
-  const items = container.querySelectorAll(slides);
+  const items = container.querySelectorAll(slides + ':not(.cloned)');
   
   create({container, items});
 

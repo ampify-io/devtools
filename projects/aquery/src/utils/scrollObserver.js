@@ -13,7 +13,7 @@ export default ({top = '1500px'}, $) => {
     width:100%;
     height:0px;
   }`);
-  
+
   const observer = document.createElement('amp-position-observer');
   observer.setAttribute('target', observee.id);
   observer.setAttribute('layout', 'nodisplay');

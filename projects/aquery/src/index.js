@@ -1,3 +1,4 @@
+import jQuery from 'jquery';
 import cssIgnore from './utils/cssIgnore';
 import injectCss from './utils/addCss';
 import autoComplete from './utils/autoComplete';
@@ -18,19 +19,29 @@ const aQuery = (() => {
   const Effects = {
     'slide-up': {
       start: 'ampify-su',
-      end: 'ampify-sy'
+      end: 'ampify-sy',
+      duration: 300
     },
     'slide-down': {
       start: 'ampify-sd',
-      end: 'ampify-sy'
+      end: 'ampify-sy',
+      duration: 300
     }, 
     'slide-right': {
       start: 'ampify-sr',
-      end: 'ampify-sx'
+      end: 'ampify-sx',
+      duration: 300
     },
     'slide-left': {
       start: 'ampify-sl',
-      end: 'ampify-sx'
+      end: 'ampify-sx',
+      duration: 300
+    },
+    'visibility': {
+      start: 'ampify-effect-hidden',
+      animation: 'translateY(0)',
+      animationInverse: 'translateY(-1000px)',
+      duration: 0
     }
   };
 
@@ -65,7 +76,7 @@ const aQuery = (() => {
       .ampify-sd {
         transition: transform 250ms ease-in-out !important;
         transform-origin: top !important;
-        transform: scaleY(0.001) !important;
+        transform: scaleY(0) !important;
         display: block !important;
         visibility: visible !important;
       }
@@ -73,7 +84,7 @@ const aQuery = (() => {
       .ampify-su {
         transition: transform 250ms ease-in-out !important;
         transform-origin: bottom !important;
-        transform: scaleY(0.001) !important;
+        transform: scaleY(0) !important;
         display: block !important;
         visibility: visible !important;
       }
@@ -85,21 +96,30 @@ const aQuery = (() => {
       .ampify-sr {
         transition: transform 250ms ease-in-out !important;
         transform-origin: left !important;
-        transform: scaleX(0.001) !important;
+        transform: scaleX(0) !important;
         display: block !important;
+        left: 0px !important;
         visibility: visible !important;
       }
 
       .ampify-sl {
         transition: transform 250ms ease-in-out !important;
         transform-origin: right !important;
-        transform: scaleX(0.001) !important;
+        transform: scaleX(0) !important;
         display: block !important;
         visibility: visible !important;
+        right: 0px !important;
       }
       
       .ampify-sx {
         transform: scaleX(1) !important;
+      }
+
+      .ampify-effect-hidden {
+        transition: transform 250ms ease-in-out !important;
+        transform: translateY(-1000px) !important;
+        display: block !important;
+        visibility: visible !important;
       }
     `);
   
@@ -128,6 +148,37 @@ const aQuery = (() => {
   class aQueryEvents {
     constructor(nodes) {
       this.nodes = nodes;
+      this.length = nodes.length;
+
+      this.proxy = new Proxy(this, {
+        get(target, prop) {
+          if (aQMode === 'scroll-actions') {
+            return new aQueryScrollActions(target.nodes, target)[prop];
+          }
+
+          if (aQMode === 'actions') {
+            return new aQueryActions(target.nodes, target)[prop];
+          }
+
+          if (target[prop]) {
+            return target[prop];
+          } else if (jQuery.fn[prop]) {
+            return (...args) => {
+              args = args.map(arg => arg.__proto__.constructor.name == 'aQueryEvents' ? arg.nodes : arg);
+
+              const ret = jQuery(target.nodes)[prop](...args);
+
+              if (ret instanceof jQuery) {
+                //target.nodes = ret.toArray();
+
+                return new aQueryEvents(ret.toArray());
+              }
+              
+              return ret;
+            }
+          }
+        }
+      });
 
       for (const node of this.nodes) {
         if (node.nodeType === 1) {
@@ -135,7 +186,7 @@ const aQuery = (() => {
         }
       }
 
-      return this;
+      return this.proxy;
     }
 
     get(index) {
@@ -171,7 +222,7 @@ const aQuery = (() => {
         }
 
         else if (event === 'scroll') {
-          const exitAction = options.exit && arrActions.length == 2 ? arrActions.pop() : null;
+          const exitAction = arrActions.length == 2 ? arrActions.pop() : null;
 
           const { observer, observee } = scrollObserver({top: options.enter}, aQuery);
           const anim = createAnimation({
@@ -215,46 +266,12 @@ const aQuery = (() => {
 
       aQMode = 'events';
     }
-    
-    show() {
-      for (const node of this.nodes) {
-        injectCss(`#${genId(node)} {display: block !important;}`);       
-      }
-    }
 
     hide() {
-      this.show();
-
       for (const node of this.nodes) {
+        jQuery(node).show();
+
         node.setAttribute('hidden', '');     
-      }
-
-      return this;
-    }
-
-    addClass(cls) {
-      for (const node of this.nodes) {
-        node.classList.add(...cls.split(' '));     
-      }
-
-      return this;
-    }
-
-    data(key, val) {
-      if (val === undefined) return;
-      
-      for (const node of this.nodes) {
-        node.setAttribute(`data-${key}`, val);
-      }
-
-      return this;
-    }
-
-    html(val) {
-      if (val === undefined) return;
-
-      for (const node of this.nodes) {
-        node.innerHTML = '';
       }
 
       return this;
@@ -262,7 +279,7 @@ const aQuery = (() => {
 
     ajaxList(options = {}) {
       for (const node of this.nodes) {
-        ajaxList(Object.assign({}, options, {container: node})); 
+        ajaxList(Object.assign({}, options, {container: node}), aQuery); 
       }
 
       return this;
@@ -315,29 +332,6 @@ const aQuery = (() => {
 
       return this;
     }
-
-    clone(deep = false, options = {}) {
-      for (const [index, node] of this.nodes.entries()) {
-        const clone = node.cloneNode(deep);
-
-        this.nodes[index] = clone;
-
-        node.replaceWith(clone);
-
-        if (options.removeOrig) { node.remove(); } 
-      }
-
-      return this;
-    }
-
-    //DOM
-    parent() {
-      for (const [i, node] of this.nodes.entries()) {
-        this.nodes[i] = node.parentNode;
-      }
-
-      return this;
-    }
   }
 
   class aQueryActions {
@@ -354,7 +348,7 @@ const aQuery = (() => {
       return this;
     }
 
-    toggleVisibility() {
+    toggle() {
       for (const node of this.nodes) {
         setDefaultVisibility(node);
 
@@ -362,6 +356,10 @@ const aQuery = (() => {
       }
 
       return this;
+    }
+
+    toggleVisibility() {
+      return this.toggle();
     }
 
     show() {
@@ -464,9 +462,8 @@ const aQuery = (() => {
       return this;
     }
 
-    scrollTop(val, { duration = 250 } = {}) {
+    scrollTop(val = 0, duration = 250) {
       if (this.nodes[0] !== document.body) throw new Error('scrollTop can only be applied to body');
-      if (val === undefined) return;
 
       const div = document.createElement('div');
       div.setAttribute('ampify-keep', '');
@@ -499,7 +496,7 @@ const aQuery = (() => {
   
         arrActions.push(`AMP.navigateTo(url=event.value, target=${target})`);
       } else {
-        arrActions.push(`AMP.navigateTo(url='${url}', target=${target})`);
+        arrActions.push(`AMP.navigateTo(url=${url == `[AMPIFY_EVENT_VALUE]` ? 'event.value' : `'${url}'`}, target=${target})`);
       }
     }
 
@@ -507,6 +504,14 @@ const aQuery = (() => {
     next() {
       for (const [i, node] of this.nodes.entries()) {
         this.nodes[i] = node.nextElementSibling;
+      }
+
+      return this;
+    }
+
+    parentNode() {
+      for (const [i, node] of this.nodes.entries()) {
+        this.nodes[i] = node.parentNode;
       }
 
       return this;
@@ -532,7 +537,17 @@ const aQuery = (() => {
         }
       }
 
+      addEffectsCss();
+
       return this;
+    }
+
+    toggle() {
+      for (const node of this.nodes) {
+        node.removeAttribute('hidden');
+      }
+
+      return this.addEffect('visibility', true);
     }
 
     slideToggle({ direction = 'down' } = {}) {
@@ -540,26 +555,24 @@ const aQuery = (() => {
     }
 
     slideUp() {
-      this.addEffect('slide-up');
+      return this.addEffect('slide-up');
     }
 
     slideDown() {
-      this.addEffect('slide-down');
+      return this.addEffect('slide-down');
     }
 
     addEffect(effect, toggle = false) {
-      const { start } = Effects[effect];
-
-      addEffectsCss();
+      const { start, animation, animationInverse, duration } = Effects[effect];
 
       for (const node of this.nodes) {
         node.classList.add(start);
 
         const anim = createAnimation({
           "selector": `#${genId(node)}`,
-          "duration": "0.3s",
+          "duration": duration,
           "fill": "forwards",
-          "keyframes": {'transform': `scaleY(1)`}
+          "keyframes": {'transform': animation || 'scaleY(1)'}
         });
   
         arrActions.push(`${anim.id}.start`);
@@ -567,9 +580,9 @@ const aQuery = (() => {
         if (toggle) {
           const anim = createAnimation({
             "selector": `#${genId(node)}`,
-            "duration": "0.3s",
+            "duration": duration,
             "fill": "forwards",
-            "keyframes": {'transform': `scaleY(0.001)`}
+            "keyframes": {'transform': animationInverse || 'scaleY(0.001)'}
           });
 
           arrActions.push(`${anim.id}.start`);
@@ -645,8 +658,8 @@ const aQuery = (() => {
     }
   }
 
-  const aQuery = window.aQuery = (nodes) => {
-    nodes = nodesToArray(nodes);
+  const aQuery = window.aQuery = new Proxy((nodes) => {
+    nodes = jQuery(nodes).toArray();
 
     if (aQMode == 'events') {
       return (activeAQEvents = new aQueryEvents(nodes));
@@ -659,7 +672,11 @@ const aQuery = (() => {
     else if (aQMode == 'scroll-actions') {
       return new aQueryScrollActions(nodes, activeAQEvents);
     }
-  }
+  }, {
+    get(target, prop) {
+      return target[prop] || jQuery[prop];
+    }
+  });
 
   aQuery.cssIgnore = (...ignoreList) => {
     //#TODO - support ids (make class default)
@@ -676,13 +693,15 @@ const aQuery = (() => {
 
   aQuery.gtag = gtag;
 
+  aQuery.genId = genId;
+
   aQuery.createState = (state) => {
     return new aQueryState(state);
   }
 
-  aQuery.getJSON = (url) => {
+  /*aQuery.getJSON = (url) => {
     return new aQueryState(url);
-  }
+  }*/
 
   aQuery.AMP = AMP;
 

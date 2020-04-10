@@ -113,7 +113,7 @@ const autoComplete = ({
   select,
   template,
   itemsKey = '.',
-  query = 'term'
+  query
 }, $) => {
   if (!input.getAttribute('placeholder') && input.getAttribute('value')) {
     input.setAttribute('placeholder', input.getAttribute('value'));
