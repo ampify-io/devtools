@@ -31,6 +31,13 @@ export const addInlineScript = js => {
   }, 10);
 };
 
+export const injectCss = css => {
+  const style = document.createElement('style');
+  style.appendChild(document.createTextNode(css));
+
+  document.head.appendChild(style);
+}
+
 //<meta id="viewport-meta" name="viewport" content="width=320, user-scalable=no">
 //viewport meta tag with fixed width forces the screen width to remain 320 both in iphone x(large device) and iphone 5 (small device)
 //this makes the images algo useless

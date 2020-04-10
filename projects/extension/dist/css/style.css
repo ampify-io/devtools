@@ -47,7 +47,3 @@
         transform: rotate(360deg); 
     }
 }
-
-img[alt="Hebrew version"] {
-    opacity: 0;
-}

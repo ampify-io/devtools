@@ -1,4 +1,4 @@
-import { insertOverlay, removeOverlay } from './utils/utils';
+import { injectCss, insertOverlay, removeOverlay } from './utils/utils';
 import registerCallback from './utils/callbacks';
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -102,11 +102,19 @@ const setSizing = (size) => {
   ];
 
   elements.forEach(el => {
-    el.setAttribute(`data-ampify-size-${size}`, JSON.stringify({
-      w: Math.floor(Math.max(el.clientWidth, el.offsetWidth)),
-      h: Math.floor(Math.max(el.clientHeight, el.offsetHeight)),
-      style: el.getAttribute('style') || ''
-    }));
+    const data = {};
+
+    data.w = Math.floor(Math.max(el.clientWidth, el.offsetWidth));
+    data.h = Math.floor(Math.max(el.clientHeight, el.offsetHeight));
+    data.style = el.getAttribute('style') || '';
+
+    if (el.matches('img') && !el.offsetParent) {
+      data.w = Math.max(data.w, el.naturalWidth);
+      data.h = Math.max(data.h, el.naturalHeight);
+      data.ih = true;
+    }
+    
+    el.setAttribute(`data-ampify-size-${size}`, JSON.stringify(data));
   });
 }
 
@@ -116,6 +124,14 @@ const insertBase = () => {
   base.href = location.href;
   
   document.head.prepend(base);
+}
+
+const insertAmpCss = () => {
+  injectCss(`
+    :root:not(#_) [hidden] {
+      display: none !important;
+    }
+  `);
 }
 
 const getHTMLForAmpify = () => {
@@ -135,6 +151,8 @@ const getHTMLForAmpify = () => {
   const settings = window.__ampify__settings || {};
   const config = window.__ampify__json || {};
   const { cssFilter = [], plugins = [], blockFiles = [], waitForElement } = config;
+
+  insertAmpCss();
 
   for (const { name, options = {} } of plugins) {
     console.log(name, window[name]);
