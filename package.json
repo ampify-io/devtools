@@ -7,9 +7,7 @@
   ],
   "scripts": {
     "build-extension": "yarn workspace extension build",
-    "build-aquery": "yarn workspace @ampify/aquery build",
-    "server-start": "yarn workspace server start",
-    "static-start": "yarn serve -p 2311"
+    "build-aquery": "yarn workspace @ampify/aquery build"
   },
   "husky": {
     "hooks": {
