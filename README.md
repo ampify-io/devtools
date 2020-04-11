@@ -49,13 +49,15 @@ $ yarn lerna publish
 
 ### Boilerplate
 
-#### Build
+See https://github.com/ampify-io/boilerplate.
+
+#### Local Build
 
 ```shell script
 $ yarn workspace @ampify/boilerplate build --watch
 ```
 
-### Start Dev-Server
+### Local Start Dev-Server
 
 ```shell script
 $ yarn workspace @ampify/boilerplate start
