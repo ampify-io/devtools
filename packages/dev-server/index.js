@@ -5,13 +5,17 @@ const morgan = require('morgan');
 const { text } = require('body-parser');
 const path = require('path');
 const fs = require('fs').promises;
+const debug = require('debug');
+const log = debug('ampify:dev-server');
+
+debug.enable('ampify:dev-server');
 
 const app = express();
 const port = process.env.PORT || 2310;
 
 const publicPath = path.resolve(process.argv[2] || './dist');
 
-app.use(morgan('short'));
+app.use(morgan('short', { stream: { write: (msg) => log(msg.trim()) } }));
 app.use(text({ limit: '50mb' }));
 app.use(
   express.static(publicPath, {
@@ -25,8 +29,6 @@ app.post('/*.js', async (req, res, next) => {
     path.resolve(publicPath, req.path.substr(1)),
     'utf-8',
   );
-
-  console.log(file);
 
   res.set('Content-Type', 'text/javascript');
   res.send(file);
@@ -47,5 +49,5 @@ app.post('/save', async (req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log('server started on port %s', port);
+  log('server started on port %s', port);
 });
