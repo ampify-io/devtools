@@ -23,11 +23,12 @@ app.use(
 app.post('/save', async (req, res, next) => {
   try {
     await fs.writeFile(
-      path.resolve(publicPath, 'latest.html'),
+      path.resolve(publicPath, 'index.html'),
       req.body,
       'utf-8',
     );
-    res.json({ url: `http://localhost:${port}/latest.html` });
+
+    await res.json({ url: `http://localhost:${port}/index.html` });
   } catch (e) {
     next(e);
   }
