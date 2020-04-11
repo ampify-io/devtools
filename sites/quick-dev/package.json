@@ -5,7 +5,7 @@
   "scripts": {
     "prebuild": "trash dist",
     "build": "webpack -d",
-    "start": "dev-server"
+    "start": "ampify-dev-server"
   },
   "dependencies": {
     "@ampify/aquery": "^1.0.0"
