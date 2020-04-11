@@ -1,31 +1,30 @@
-### Installation ###
+### Installation
 
-1. Clone Ampify Devtools repository 
-https://github.com/ampify-io/devtools
+1. Clone Ampify Devtools repository
+   https://github.com/ampify-io/devtools
 
 2. yarn install / npm install
 
 3. install browser extension locally in developer mode"
 
-  the extension files are located in projects/extension/dist
+the extension files are located in projects/extension/dist
 
-  A: Visit chrome://extensions (via omnibox or menu -> Tools -> Extensions).
-  B: Enable Developer mode by ticking the checkbox in the upper-right corner.
-  C: Click on the "Load unpacked extension..." button.
-  D: Select the directory containing your unpacked extension.
+A: Visit chrome://extensions (via omnibox or menu -> Tools -> Extensions).
+B: Enable Developer mode by ticking the checkbox in the upper-right corner.
+C: Click on the "Load unpacked extension..." button.
+D: Select the directory containing your unpacked extension.
 
-  https://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store
+https://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store
 
-
-### RUN Tools ###
+### RUN Tools
 
 1. yarn server-start / npm run server-start
 2. yarn static-start / npm run server-start (in new terminal)
 
-### Convert Page to AMP ###
+### Convert Page to AMP
 
 1. open new browser tab in chrome
-2. open Developer tools 
+2. open Developer tools
 3. emulate iphone x
 4. go to the desired page (for example http://example.com/)
 5. click on the extension browser icon
@@ -33,20 +32,20 @@ https://github.com/ampify-io/devtools
 
    example video: [VIDEO HERE]
 
-### Convert Javascript to AMP with aQuery ###
+### Convert Javascript to AMP with aQuery
 
-  - Video
-  
-  example video: [VIDEO HERE]
+- Video
 
- - Initial setup: 
+example video: [VIDEO HERE]
 
-  1. copy the example.com boilerplate in sites/example.com
-  2. change the folder name to your site
-  3. update the "name" prop in package json (inside the folder you've created)
-  4. update ampify.json file in the root folder, change the url in "dev/paths" array to match your folder name
+- Initial setup:
 
-- Develope
+1. copy the example.com boilerplate in sites/example.com
+2. change the folder name to your site
+3. update the "name" prop in package json (inside the folder you've created)
+4. update ampify.json file in the root folder, change the url in "dev/paths" array to match your folder name
+
+- Develop
 
   1. open src/index.js in the folder you've created
   2. write aQuery code
@@ -56,11 +55,18 @@ https://github.com/ampify-io/devtools
 
 - Debug
 
-[OMER PUT HERE prologue text - 
-1. we are in beta.. 
+[OMER PUT HERE prologue text -
+
+1. we are in beta..
 2. contact us at support@ampify.io and our slack channel
 3. If you get stuck with an error from aQuery you can help us improving and debug aQuery code
-]
+   ]
 
- 1. aQuery soure code is located at projects/aQuery
- 2. extension code is located at projects/extension
+4. aQuery soure code is located at projects/aQuery
+5. extension code is located at projects/extension
+
+### Publish
+
+```shell script
+$ yarn lerna publish
+```
