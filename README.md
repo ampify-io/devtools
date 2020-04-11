@@ -30,7 +30,7 @@ $ yarn workspace extention build
 
 #### Install The Extension:
 
-The extension files located in projects/extension/dist
+The extension files located in [projects/extension/dist](./projects/extension/dist)
 
 - Visit [chrome://extensions](chrome://extensions) (via omnibox or menu -> Tools -> Extensions).
 - Enable Developer mode by ticking the checkbox in the upper-right corner.
