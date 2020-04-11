@@ -29,5 +29,8 @@
     "snapshotSerializers": [
       "jest-serializer-html"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
