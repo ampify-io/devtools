@@ -20,6 +20,18 @@ app.use(
   }),
 );
 
+app.post('/*.js', async (req, res, next) => {
+  const file = await fs.readFile(
+    path.resolve(publicPath, req.path.substr(1)),
+    'utf-8',
+  );
+
+  console.log(file);
+
+  res.set('Content-Type', 'text/javascript');
+  res.send(file);
+});
+
 app.post('/save', async (req, res, next) => {
   try {
     await fs.writeFile(
