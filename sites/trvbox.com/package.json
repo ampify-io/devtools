@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "trash dist",
-    "build": "webpack -d"
+    "build": "webpack -d",
+    "start": "ampify-dev-server"
   },
   "devDependencies": {
     "trash-cli": "^3.0.0",
