@@ -32,12 +32,12 @@ $ yarn workspace extention build
 
 The extension files located in projects/extension/dist
 
-A: Visit chrome://extensions (via omnibox or menu -> Tools -> Extensions).
-B: Enable Developer mode by ticking the checkbox in the upper-right corner.
-C: Click on the "Load unpacked extension..." button.
-D: Select the directory containing your unpacked extension.
+- Visit [chrome://extensions](chrome://extensions) (via omnibox or menu -> Tools -> Extensions).
+- Enable Developer mode by ticking the checkbox in the upper-right corner.
+- Click on the "Load unpacked extension..." button.
+- Select the directory containing your unpacked extension.
 
-https://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store
+Checkout [install chrome extension not in the store](https://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store) in stackoverflow.
 
 ### Publish
 
