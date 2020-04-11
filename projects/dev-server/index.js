@@ -9,10 +9,12 @@ const port = process.env.PORT || 2310;
 
 app.use(morgan('short'));
 app.use(text({ limit: '50mb' }));
-app.use(express.static(join(__dirname, 'public'), {
-  etag: false,
-  maxAge: 0
-}));
+app.use(
+  express.static(join(__dirname, 'public'), {
+    etag: false,
+    maxAge: 0,
+  }),
+);
 
 app.post('/save', async (req, res, next) => {
   try {
@@ -21,7 +23,7 @@ app.post('/save', async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-})
+});
 
 app.listen(port, () => {
   console.log('server started on port %s', port);

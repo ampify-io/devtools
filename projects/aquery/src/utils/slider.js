@@ -1,4 +1,4 @@
-const create = ({container, items, controls}) => {
+const create = ({ container, items, controls }) => {
   const width = items[0].offsetWidth;
   const height = items[0].offsetHeight;
   const carousel = document.createElement('amp-carousel');
@@ -8,9 +8,11 @@ const create = ({container, items, controls}) => {
   carousel.setAttribute('height', height);
   carousel.setAttribute('type', 'slides');
   carousel.setAttribute('loop', '');
-  if (controls) { carousel.setAttribute('controls', ''); }
+  if (controls) {
+    carousel.setAttribute('controls', '');
+  }
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const div = document.createElement('div');
 
     div.innerHTML = item.innerHTML;
@@ -19,15 +21,12 @@ const create = ({container, items, controls}) => {
   });
 
   container.replaceWith(carousel);
-}
+};
 
-export default ({
-  slides,
-  container
-}, $) => {
+export default ({ slides, container }, $) => {
   const items = container.querySelectorAll(slides + ':not(.cloned)');
-  
-  create({container, items});
+
+  create({ container, items });
 
   $.injectCss(`
     amp-carousel {

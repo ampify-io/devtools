@@ -9,14 +9,25 @@ Settings.init = () => {
   Settings.isReload = document.querySelector('#is-reload');
   Settings.isRunPlugins = document.querySelector('#is-run-plugins');
   Settings.isRunPluginsOnly = document.querySelector('#is-plugins-only');
-  Settings.isRunPluginsOnlyContainer = document.querySelector('#is-plugins-only-container');
+  Settings.isRunPluginsOnlyContainer = document.querySelector(
+    '#is-plugins-only-container',
+  );
   Settings.blockList = document.querySelector('#block-list');
 
   Settings.jsonBtn = document.querySelector('#add-url-btn');
   Settings.jsonInp = document.querySelector('#add-url-inp');
 };
 
-Settings.populate = ({ isMinify, isAmpify, isReload, isRunPlugins, isRunPluginsOnly, blockList, ampifyJSONList, ampifyJSON }) => {
+Settings.populate = ({
+  isMinify,
+  isAmpify,
+  isReload,
+  isRunPlugins,
+  isRunPluginsOnly,
+  blockList,
+  ampifyJSONList,
+  ampifyJSON,
+}) => {
   Settings.isMinify.checked = isMinify;
   Settings.isAmpify.checked = isAmpify;
   Settings.isReload.checked = isReload;
@@ -31,25 +42,27 @@ Settings.populate = ({ isMinify, isAmpify, isReload, isRunPlugins, isRunPluginsO
 };
 
 Settings.initEvents = () => {
-  Settings.isMinify.addEventListener('change', e =>
-    Settings.updateSettings({ isMinify: !!e.target.checked })
+  Settings.isMinify.addEventListener('change', (e) =>
+    Settings.updateSettings({ isMinify: !!e.target.checked }),
   );
-  Settings.isAmpify.addEventListener('change', e =>
-    Settings.updateSettings({ isAmpify: !!e.target.checked })
+  Settings.isAmpify.addEventListener('change', (e) =>
+    Settings.updateSettings({ isAmpify: !!e.target.checked }),
   );
-  Settings.isReload.addEventListener('change', e =>
-    Settings.updateSettings({ isReload: !!e.target.checked })
+  Settings.isReload.addEventListener('change', (e) =>
+    Settings.updateSettings({ isReload: !!e.target.checked }),
   );
-  Settings.isRunPlugins.addEventListener('change', e => {
+  Settings.isRunPlugins.addEventListener('change', (e) => {
     Settings.updateSettings({ isRunPlugins: !!e.target.checked });
 
-    Settings.isRunPluginsOnlyContainer.hidden = !e.target.checked;  
+    Settings.isRunPluginsOnlyContainer.hidden = !e.target.checked;
   });
-  Settings.isRunPluginsOnly.addEventListener('change', e =>
-    Settings.updateSettings({ isRunPluginsOnly: !!e.target.checked })
+  Settings.isRunPluginsOnly.addEventListener('change', (e) =>
+    Settings.updateSettings({ isRunPluginsOnly: !!e.target.checked }),
   );
 
-  Settings.blockList.addEventListener('change', e => Settings.updateSettings({ blockList: e.target.value }));
+  Settings.blockList.addEventListener('change', (e) =>
+    Settings.updateSettings({ blockList: e.target.value }),
+  );
 
   Settings.jsonBtn.addEventListener('click', Settings.addAmpifyJsonItem);
 };
@@ -64,46 +77,60 @@ Settings.populateAmpifyJSON = ({ ampifyJSONList = [], ampifyJSON }) => {
     <span>${Config.AMPIFY_LOCAL_JSON} (default)<span>
   </div>`;
 
-  ampifyJSONList.forEach(url => {
+  ampifyJSONList.forEach((url) => {
     html += `<div class="item">
-      <input type="radio" name="ampify-json" value="${url}" ${activeUrl === url ? 'checked' : ''}>
-      <button class="close" data-url="${url}" ${activeUrl === url ? 'disabled' : ''}>×</button>
+      <input type="radio" name="ampify-json" value="${url}" ${
+      activeUrl === url ? 'checked' : ''
+    }>
+      <button class="close" data-url="${url}" ${
+      activeUrl === url ? 'disabled' : ''
+    }>×</button>
       <span class="text">${url}<span>
     </div>`;
   });
 
   container.innerHTML = html;
 
-  container.querySelectorAll('.close').forEach(btn => btn.addEventListener('click', Settings.removeAmpifyJsonItem));
-  container.querySelectorAll('[name=ampify-json]').forEach(inp => inp.addEventListener('change', Settings.setAmpifyJSON));
-}
+  container
+    .querySelectorAll('.close')
+    .forEach((btn) =>
+      btn.addEventListener('click', Settings.removeAmpifyJsonItem),
+    );
+  container
+    .querySelectorAll('[name=ampify-json]')
+    .forEach((inp) => inp.addEventListener('change', Settings.setAmpifyJSON));
+};
 
 Settings.setAmpifyJSON = (e) => {
   const url = e.target.value;
 
   Settings.updateSettings({ ampifyJSON: url }, () => {
     Settings.populateAmpifyJSON(Settings.data);
-  });  
-}
+  });
+};
 
 Settings.removeAmpifyJsonItem = (e) => {
   const url = e.target.dataset['url'];
 
   if (confirm(`Remove ${url}?`)) {
-    const urls = Settings.data.ampifyJSONList.filter(u => u !== url);
-    
+    const urls = Settings.data.ampifyJSONList.filter((u) => u !== url);
+
     Settings.updateSettings({ ampifyJSONList: urls }, () => {
       Settings.populateAmpifyJSON(Settings.data);
     });
   }
-}
+};
 
 Settings.addAmpifyJsonItem = () => {
   const url = Settings.jsonInp.value;
   const urls = Settings.data.ampifyJSONList || [];
 
-  if (!url) { return; }
-  if (urls.includes(url)) { return alert(`"${url}" url is already added`); }
+  if (!url) {
+    return;
+  }
+  if (urls.includes(url)) {
+    return alert(`"${url}" url is already added`);
+  }
 
   urls.push(url.trim());
 
@@ -112,12 +139,12 @@ Settings.addAmpifyJsonItem = () => {
 
     Settings.populateAmpifyJSON(Settings.data);
   });
-}
+};
 
 Settings.updateSettings = (update, callback) => {
   const data = Object.assign(Settings.data, update);
 
-  chrome.storage.local.set({ settings: data }, function() {
+  chrome.storage.local.set({ settings: data }, function () {
     Settings.message.innerHTML = 'Successfully saved!';
 
     if (Settings.timeout) {
@@ -128,21 +155,23 @@ Settings.updateSettings = (update, callback) => {
       Settings.message.innerHTML = '';
     }, 2000);
 
-    if (callback) { callback(); }
+    if (callback) {
+      callback();
+    }
   });
 
   console.log('data', data);
 };
 
 Settings.storage = () => {
-  return new Promise(resolve => {
-    chrome.storage.local.get(['settings'], function(data) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['settings'], function (data) {
       Settings.data = data.settings;
-  
+
       resolve();
     });
   });
-}
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
   Settings.init();

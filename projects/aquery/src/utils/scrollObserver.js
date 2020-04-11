@@ -1,6 +1,6 @@
 import genId from './genId';
 
-export default ({top = '1500px'}, $) => {
+export default ({ top = '1500px' }, $) => {
   const observee = document.createElement('div');
   observee.id = genId(observee);
   document.body.prepend(observee);

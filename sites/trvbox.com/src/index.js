@@ -10,7 +10,7 @@ const menu = () => {
     $(e.target).next().toggleVisibility();
     $(e.target).first().toggleClass('fa-minus');
   });
-}
+};
 
 const search = () => {
   $('#search-btn').on('click', (e) => {
@@ -21,33 +21,37 @@ const search = () => {
 
   $('#search-inp').autocomplete({
     source: url,
-    select: function(e) {
+    select: function (e) {
       $('.search-form').submit();
-    }
+    },
   });
-}
+};
 
 const social = () => {
   $('#social-btn').on('click', (e) => {
     $('#social-links').slideToggle();
   });
-}
+};
 
 const slider = () => {
   $('.slick-slider').slider({
-    slides: '.slick-slide'
+    slides: '.slick-slide',
   });
-}
+};
 
 const sticky = () => {
-  $(window).on('scroll', () => {
-    $('.sticky-footer').slideUp();
-  }, { enter: '1300px' });
+  $(window).on(
+    'scroll',
+    () => {
+      $('.sticky-footer').slideUp();
+    },
+    { enter: '1300px' },
+  );
 
   $('.sticky-footer .close').on('click', () => {
     $('.sticky-footer').hide();
   });
-}
+};
 
 export default () => {
   menu();

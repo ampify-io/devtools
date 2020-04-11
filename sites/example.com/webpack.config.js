@@ -2,11 +2,11 @@ const { name } = require('./package');
 
 module.exports = {
   entry: {
-    'ampify': './src'
+    ampify: './src',
   },
   output: {
     library: '[name]',
     libraryTarget: 'window',
-    filename: '[name].js'
-  }
+    filename: '[name].js',
+  },
 };

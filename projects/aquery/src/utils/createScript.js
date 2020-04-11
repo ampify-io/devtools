@@ -15,7 +15,7 @@ const createAmpScript = (id, container, js) => {
   ampScript.setAttribute('script', id);
 
   container.parentNode.insertBefore(ampScript, container);
-  
+
   ampScript.appendChild(container);
 
   const script = document.createElement('script');
@@ -26,7 +26,7 @@ const createAmpScript = (id, container, js) => {
   script.textContent = js;
 
   ampScript.parentNode.insertBefore(script, ampScript);
-}
+};
 
 const getMeta = () => {
   if (document.querySelector('meta[name="amp-script-src"]')) {
@@ -41,21 +41,21 @@ const getMeta = () => {
   document.head.appendChild(meta);
 
   return meta;
-}
+};
 
 const createScriptMeta = (js) => {
   const meta = getMeta();
-  const content = meta.getAttribute('content').split(' ').filter(hash => !!hash);
-  
+  const content = meta
+    .getAttribute('content')
+    .split(' ')
+    .filter((hash) => !!hash);
+
   content.push(calculateHash(js));
 
   meta.setAttribute('content', content.join(' '));
-}
+};
 
-const createScript = ({
-  container,
-  js
-}, $) => {
+const createScript = ({ container, js }, $) => {
   const id = randomId();
 
   createAmpScript(id, container, js);

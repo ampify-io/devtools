@@ -20,58 +20,61 @@ const aQuery = (() => {
     'slide-up': {
       start: 'ampify-su',
       end: 'ampify-sy',
-      duration: 300
+      duration: 300,
     },
     'slide-down': {
       start: 'ampify-sd',
       end: 'ampify-sy',
-      duration: 300
-    }, 
+      duration: 300,
+    },
     'slide-right': {
       start: 'ampify-sr',
       end: 'ampify-sx',
-      duration: 300
+      duration: 300,
     },
     'slide-left': {
       start: 'ampify-sl',
       end: 'ampify-sx',
-      duration: 300
+      duration: 300,
     },
-    'visibility': {
+    visibility: {
       start: 'ampify-effect-hidden',
       animation: 'translateY(0)',
       animationInverse: 'translateY(-1000px)',
-      duration: 0
-    }
+      duration: 0,
+    },
   };
 
   const AMPlaceHolders = {
-    'value': '[AMPIFY_EVENT_VALUE]'
-  }
+    value: '[AMPIFY_EVENT_VALUE]',
+  };
 
-  const nodesToArray = el => {
+  const nodesToArray = (el) => {
     if (typeof el === 'string') {
-      el = /^\</.test(el) && /\>$/.test(el) ? createAmpElement(el) : document.querySelectorAll(el);
+      el =
+        /^\</.test(el) && /\>$/.test(el)
+          ? createAmpElement(el)
+          : document.querySelectorAll(el);
     }
 
     return NodeList.prototype.isPrototypeOf(el) ? Array.from(el) : [el];
-  }
+  };
 
   const createAnimation = (animation) => {
     const json = JSON.stringify(animation);
     const anim = document.createElement('amp-animation');
-    
+
     anim.id = genId(anim);
     anim.setAttribute('layout', 'nodisplay');
     anim.innerHTML = `<script type="application/json">${json}</script>`;
     document.body.prepend(anim);
-  
+
     return anim;
-  }
+  };
 
   const addEffectsCss = () => {
     if (window[`aQuery_css_effect`]) return;
-  
+
     injectCss(`
       .ampify-sd {
         transition: transform 250ms ease-in-out !important;
@@ -122,7 +125,7 @@ const aQuery = (() => {
         visibility: visible !important;
       }
     `);
-  
+
     window[`aQuery_css_effect`] = true;
   };
 
@@ -133,16 +136,18 @@ const aQuery = (() => {
       node.style.display = 'block';
       node.setAttribute('hidden', '');
     }
-  }
+  };
 
   const AMP = {
     appendActions: (node, actions) => {
-      const on = node.getAttribute('on') ? node.getAttribute('on').split(';') : [];
+      const on = node.getAttribute('on')
+        ? node.getAttribute('on').split(';')
+        : [];
 
-      actions.forEach(action => on.push(action));
+      actions.forEach((action) => on.push(action));
 
       node.setAttribute('on', actions.join(';'));
-    }
+    },
   };
 
   class aQueryEvents {
@@ -164,7 +169,11 @@ const aQuery = (() => {
             return target[prop];
           } else if (jQuery.fn[prop]) {
             return (...args) => {
-              args = args.map(arg => arg.__proto__.constructor.name == 'aQueryEvents' ? arg.nodes : arg);
+              args = args.map((arg) =>
+                arg.__proto__.constructor.name == 'aQueryEvents'
+                  ? arg.nodes
+                  : arg,
+              );
 
               const ret = jQuery(target.nodes)[prop](...args);
 
@@ -173,11 +182,11 @@ const aQuery = (() => {
 
                 return new aQueryEvents(ret.toArray());
               }
-              
+
               return ret;
-            }
+            };
           }
-        }
+        },
       });
 
       for (const node of this.nodes) {
@@ -198,16 +207,14 @@ const aQuery = (() => {
 
       if (event === 'click' || event === 'change' || event === 'select') {
         aQMode = 'actions';
-      }
-
-      else if (event === 'scroll') {
+      } else if (event === 'scroll') {
         aQMode = 'scroll-actions';
       }
 
       for (const node of this.nodes) {
         arrActions = [];
 
-        callback({target: node, value: AMPlaceHolders.value});
+        callback({ target: node, value: AMPlaceHolders.value });
 
         if (event === 'click') {
           node.removeAttribute('href');
@@ -215,38 +222,40 @@ const aQuery = (() => {
           node.setAttribute('tabindex', ++tabIndex);
 
           AMP.appendActions(node, [`tap:${arrActions.join(',')}`]);
-        }
-
-        else if (event === 'change' || event === 'select') {
+        } else if (event === 'change' || event === 'select') {
           AMP.appendActions(node, [`${event}:${arrActions.join(',')}`]);
-        }
-
-        else if (event === 'scroll') {
+        } else if (event === 'scroll') {
           const exitAction = arrActions.length == 2 ? arrActions.pop() : null;
 
-          const { observer, observee } = scrollObserver({top: options.enter}, aQuery);
+          const { observer, observee } = scrollObserver(
+            { top: options.enter },
+            aQuery,
+          );
           const anim = createAnimation({
-            "selector": `#${genId(observee)}`,
-            "duration": "0s",
-            "fill": "forwards",
-            "keyframes": {'transform': `translateY(-1000px)`}
+            selector: `#${genId(observee)}`,
+            duration: '0s',
+            fill: 'forwards',
+            keyframes: { transform: `translateY(-1000px)` },
           });
-    
+
           arrActions.push(`${anim.id}.start`);
 
           if (options.exit) {
-            const { observer: observerExit, observee: observeeExit } = scrollObserver({top: options.exit}, aQuery);
+            const {
+              observer: observerExit,
+              observee: observeeExit,
+            } = scrollObserver({ top: options.exit }, aQuery);
             const animExit = createAnimation({
-              "selector": `#${genId(observeeExit)}`,
-              "duration": "0s",
-              "fill": "forwards",
-              "keyframes": {'transform': `translateY(0.001px)`}
+              selector: `#${genId(observeeExit)}`,
+              duration: '0s',
+              fill: 'forwards',
+              keyframes: { transform: `translateY(0.001px)` },
             });
             const animRestoreEnter = createAnimation({
-              "selector": `#${genId(observee)}`,
-              "duration": "0s",
-              "fill": "forwards",
-              "keyframes": {'transform': `translateY(0.001px)`}
+              selector: `#${genId(observee)}`,
+              duration: '0s',
+              fill: 'forwards',
+              keyframes: { transform: `translateY(0.001px)` },
             });
 
             arrActions.push(`${animExit.id}.start`);
@@ -255,7 +264,9 @@ const aQuery = (() => {
               transform: translateY(-1000px);
             }`);
 
-            AMP.appendActions(observerExit, [`enter:${exitAction},${animRestoreEnter.id}.start`]);
+            AMP.appendActions(observerExit, [
+              `enter:${exitAction},${animRestoreEnter.id}.start`,
+            ]);
 
             console.log(exitAction, arrActions);
           }
@@ -271,7 +282,7 @@ const aQuery = (() => {
       for (const node of this.nodes) {
         jQuery(node).show();
 
-        node.setAttribute('hidden', '');     
+        node.setAttribute('hidden', '');
       }
 
       return this;
@@ -279,7 +290,7 @@ const aQuery = (() => {
 
     ajaxList(options = {}) {
       for (const node of this.nodes) {
-        ajaxList(Object.assign({}, options, {container: node}), aQuery); 
+        ajaxList(Object.assign({}, options, { container: node }), aQuery);
       }
 
       return this;
@@ -287,7 +298,7 @@ const aQuery = (() => {
 
     autocomplete(options = {}) {
       for (const node of this.nodes) {
-        autoComplete(Object.assign({}, options, {input: node}), aQuery);
+        autoComplete(Object.assign({}, options, { input: node }), aQuery);
       }
 
       return this;
@@ -390,7 +401,7 @@ const aQuery = (() => {
       force = force !== undefined ? ', force=' + force.toString() : '';
 
       for (const node of this.nodes) {
-        classList.forEach(cls => {
+        classList.forEach((cls) => {
           cssIgnore.add(`.${cls}`);
 
           arrActions.push(`${genId(node)}.toggleClass(class='${cls}'${force})`);
@@ -456,19 +467,24 @@ const aQuery = (() => {
 
         cssIgnore.add(`.${end}`);
 
-        arrActions.push(`${genId(node)}.toggleClass(class='${end}'${toggle ? '' : ', force=true'})`);
+        arrActions.push(
+          `${genId(node)}.toggleClass(class='${end}'${
+            toggle ? '' : ', force=true'
+          })`,
+        );
       }
 
       return this;
     }
 
     scrollTop(val = 0, duration = 250) {
-      if (this.nodes[0] !== document.body) throw new Error('scrollTop can only be applied to body');
+      if (this.nodes[0] !== document.body)
+        throw new Error('scrollTop can only be applied to body');
 
       const div = document.createElement('div');
       div.setAttribute('ampify-keep', '');
       div.id = genId(div);
-      
+
       document.body.prepend(div);
 
       injectCss(`#${div.id} {
@@ -478,12 +494,14 @@ const aQuery = (() => {
         width:0px;
         height:0px;
       }`);
-      
+
       arrActions.push(`${div.id}.scrollTo(duration=${duration})`);
     }
 
     open(url, target = '_top') {
-      const eventSource = this.parent.nodes[0].matches('select') ? 'select': 'node';
+      const eventSource = this.parent.nodes[0].matches('select')
+        ? 'select'
+        : 'node';
 
       if (eventSource === 'select') {
         for (const { options } of this.parent.nodes) {
@@ -493,10 +511,14 @@ const aQuery = (() => {
             }
           }
         }
-  
+
         arrActions.push(`AMP.navigateTo(url=event.value, target=${target})`);
       } else {
-        arrActions.push(`AMP.navigateTo(url=${url == `[AMPIFY_EVENT_VALUE]` ? 'event.value' : `'${url}'`}, target=${target})`);
+        arrActions.push(
+          `AMP.navigateTo(url=${
+            url == `[AMPIFY_EVENT_VALUE]` ? 'event.value' : `'${url}'`
+          }, target=${target})`,
+        );
       }
     }
 
@@ -569,20 +591,20 @@ const aQuery = (() => {
         node.classList.add(start);
 
         const anim = createAnimation({
-          "selector": `#${genId(node)}`,
-          "duration": duration,
-          "fill": "forwards",
-          "keyframes": {'transform': animation || 'scaleY(1)'}
+          selector: `#${genId(node)}`,
+          duration: duration,
+          fill: 'forwards',
+          keyframes: { transform: animation || 'scaleY(1)' },
         });
-  
+
         arrActions.push(`${anim.id}.start`);
 
         if (toggle) {
           const anim = createAnimation({
-            "selector": `#${genId(node)}`,
-            "duration": duration,
-            "fill": "forwards",
-            "keyframes": {'transform': animationInverse || 'scaleY(0.001)'}
+            selector: `#${genId(node)}`,
+            duration: duration,
+            fill: 'forwards',
+            keyframes: { transform: animationInverse || 'scaleY(0.001)' },
           });
 
           arrActions.push(`${anim.id}.start`);
@@ -608,7 +630,9 @@ const aQuery = (() => {
       if (typeof this.state === 'string') {
         ampState.setAttribute('src', this.state);
       } else {
-        ampState.innerHTML = `<script type="application/json">${JSON.stringify(this.state)}</script>`;
+        ampState.innerHTML = `<script type="application/json">${JSON.stringify(
+          this.state,
+        )}</script>`;
       }
 
       document.body.prepend(ampState);
@@ -623,16 +647,19 @@ const aQuery = (() => {
       list.id = genId(list);
       list.setAttribute('layout', 'fixed-height');
       list.setAttribute('height', '0');
-      list.setAttribute('data-amp-bind-is-layout-container', `${list.id}.length > 0`);
+      list.setAttribute(
+        'data-amp-bind-is-layout-container',
+        `${list.id}.length > 0`,
+      );
       list.setAttribute('src', this.state);
 
       appendTo.prepend(list);
-      
+
       const tmpl = document.createElement('template');
 
       tmpl.setAttribute('type', 'amp-mustache');
       tmpl.innerHTML = template;
-      
+
       list.appendChild(tmpl);
     }
 
@@ -647,9 +674,8 @@ const aQuery = (() => {
     set(state) {
       const arrState = [];
 
-      Object.keys(state).forEach(prop => {
-        const value = state[prop]
-          .replace(AMPlaceHolders.value, 'event.value');
+      Object.keys(state).forEach((prop) => {
+        const value = state[prop].replace(AMPlaceHolders.value, 'event.value');
 
         arrState.push(`${prop}: ${value}`);
       });
@@ -658,33 +684,34 @@ const aQuery = (() => {
     }
   }
 
-  const aQuery = window.aQuery = new Proxy((nodes) => {
-    nodes = jQuery(nodes).toArray();
+  const aQuery = (window.aQuery = new Proxy(
+    (nodes) => {
+      nodes = jQuery(nodes).toArray();
 
-    if (aQMode == 'events') {
-      return (activeAQEvents = new aQueryEvents(nodes));
-    } 
-    
-    else if (aQMode == 'actions') {
-      return new aQueryActions(nodes, activeAQEvents);
-    }
-    
-    else if (aQMode == 'scroll-actions') {
-      return new aQueryScrollActions(nodes, activeAQEvents);
-    }
-  }, {
-    get(target, prop) {
-      return target[prop] || jQuery[prop];
-    }
-  });
+      if (aQMode == 'events') {
+        return (activeAQEvents = new aQueryEvents(nodes));
+      } else if (aQMode == 'actions') {
+        return new aQueryActions(nodes, activeAQEvents);
+      } else if (aQMode == 'scroll-actions') {
+        return new aQueryScrollActions(nodes, activeAQEvents);
+      }
+    },
+    {
+      get(target, prop) {
+        return target[prop] || jQuery[prop];
+      },
+    },
+  ));
 
   aQuery.cssIgnore = (...ignoreList) => {
     //#TODO - support ids (make class default)
     if (ignoreList.length) {
-      return ignoreList.forEach(ignore => cssIgnore.add(`.${ignore}`));
+      return ignoreList.forEach((ignore) => cssIgnore.add(`.${ignore}`));
     }
 
-    return Array.from(cssIgnore).filter(ignore => !/#__ampify__/.test(ignore));
+    return Array.from(cssIgnore).filter(
+      (ignore) => !/#__ampify__/.test(ignore),
+    );
   };
 
   aQuery.injectCss = injectCss;
@@ -697,7 +724,7 @@ const aQuery = (() => {
 
   aQuery.createState = (state) => {
     return new aQueryState(state);
-  }
+  };
 
   /*aQuery.getJSON = (url) => {
     return new aQueryState(url);

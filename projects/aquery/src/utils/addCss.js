@@ -1,4 +1,4 @@
-module.exports = str => {
+module.exports = (str) => {
   const style = document.createElement('style');
   style.appendChild(document.createTextNode(str));
 

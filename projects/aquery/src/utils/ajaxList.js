@@ -1,12 +1,9 @@
 import randomId from './randomId';
 
-const ajaxList = ({
-  container,
-  url,
-  template,
-  height,
-  infinite = false
-}, $) => {
+const ajaxList = (
+  { container, url, template, height, infinite = false },
+  $,
+) => {
   const list = document.createElement('amp-list');
 
   list.id = randomId();
@@ -22,12 +19,12 @@ const ajaxList = ({
   //clone container to detach any javascript that might alter the content
   $(container).clone().html('').insertAfter(container).append(list);
   $(container).remove();
-  
+
   const tmpl = document.createElement('template');
 
   tmpl.setAttribute('type', 'amp-mustache');
   tmpl.innerHTML = template;
-  
+
   list.appendChild(tmpl);
 };
 

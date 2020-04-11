@@ -1,25 +1,30 @@
 import { parseDotEnv } from './dotenv';
 
 export const getDotEnv = () => {
-  return new Promise(resolve => {
-    chrome.runtime.getPackageDirectoryEntry(root => {
-      root.getFile('.env', {}, fileEntry => {
-        fileEntry.file(file => {
-          const reader = new FileReader();
-          
-          reader.onloadend = function(e) {
-            resolve(parseDotEnv(this.result));
-          };
-          reader.readAsText(file);
-        });
-      }, err => {
-        resolve({});
-      });
+  return new Promise((resolve) => {
+    chrome.runtime.getPackageDirectoryEntry((root) => {
+      root.getFile(
+        '.env',
+        {},
+        (fileEntry) => {
+          fileEntry.file((file) => {
+            const reader = new FileReader();
+
+            reader.onloadend = function (e) {
+              resolve(parseDotEnv(this.result));
+            };
+            reader.readAsText(file);
+          });
+        },
+        (err) => {
+          resolve({});
+        },
+      );
     });
   });
-}
+};
 
-export const addInlineScript = js => {
+export const addInlineScript = (js) => {
   const script = document.createElement('script');
   const content = document.createTextNode(`(() => {\n${js}\n})();`);
 
@@ -31,18 +36,18 @@ export const addInlineScript = js => {
   }, 10);
 };
 
-export const injectCss = css => {
+export const injectCss = (css) => {
   const style = document.createElement('style');
   style.appendChild(document.createTextNode(css));
 
   document.head.appendChild(style);
-}
+};
 
 //<meta id="viewport-meta" name="viewport" content="width=320, user-scalable=no">
 //viewport meta tag with fixed width forces the screen width to remain 320 both in iphone x(large device) and iphone 5 (small device)
 //this makes the images algo useless
 //we are fixing it by forcing the body to the the correct width and reseting it when done.
-export const sanitaizeViewportMeta = step => {
+export const sanitaizeViewportMeta = (step) => {
   const getMetaViewportWidth = () => {
     if (store.metaViewportWidth) {
       return true;
@@ -83,22 +88,24 @@ export const insertOverlay = () => {
   div.className = 'ampify-devtools-overlay';
 
   document.body.prepend(div);
-}
+};
 
 export const removeOverlay = () => {
   const overlay = document.querySelector('.ampify-devtools-overlay');
 
-  if (overlay) { overlay.remove(); }
-}
+  if (overlay) {
+    overlay.remove();
+  }
+};
 
 export const ampifyError = (err, subs = {}) => {
   const overlay = document.querySelector('.ampify-devtools-overlay');
-  
+
   for (let [key, value] of Object.entries(subs)) {
     err = err.replace(`[@${key.toUpperCase()}]`, value);
   }
 
-  if (overlay) { 
+  if (overlay) {
     overlay.classList.add('ampify-devtools-error');
     overlay.innerHTML = err.replace(/\n/g, '<br>');
   }
@@ -110,4 +117,4 @@ export const ampifyError = (err, subs = {}) => {
   console.error(err);
 
   return;
-}
+};

@@ -9,4 +9,4 @@ export default (node) => {
   }
 
   return node.id;
-}
+};

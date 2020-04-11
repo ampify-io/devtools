@@ -1,4 +1,9 @@
-import { addInlineScript, insertOverlay, removeOverlay, ampifyError } from './utils/utils';
+import {
+  addInlineScript,
+  insertOverlay,
+  removeOverlay,
+  ampifyError,
+} from './utils/utils';
 import ERRORS from './utils/errors';
 
 const callbacks = {};
@@ -14,10 +19,10 @@ callbacks.genCallback = () => {
 };
 
 const init = () => {
-  sendToBackground({action: 'get-config'}).then(data => {
+  sendToBackground({ action: 'get-config' }).then((data) => {
     Object.assign(Config, data);
   });
-}
+};
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action == 'start-ampify') {
@@ -36,11 +41,11 @@ export const fetchFiles = async (...args) => {
 
   for (const item of args) {
     const file = typeof item == 'string' ? item : item[0];
-    const cb = typeof item == 'string' ? a => a : item[1];
+    const cb = typeof item == 'string' ? (a) => a : item[1];
 
     const content = await sendToBackground({
       action: 'ajax-request',
-      url: file
+      url: file,
     });
 
     files.push(cb(content));
@@ -49,11 +54,11 @@ export const fetchFiles = async (...args) => {
   return files.join('\n');
 };
 
-export const sendToBackground = data => {
-  return new Promise(resolve => {
+export const sendToBackground = (data) => {
+  return new Promise((resolve) => {
     data.cbid = callbacks.genCallback();
 
-    callbacks[data.cbid] = data => {
+    callbacks[data.cbid] = (data) => {
       resolve(data);
     };
 
@@ -62,8 +67,8 @@ export const sendToBackground = data => {
 };
 
 const getSettings = () => {
-  return new Promise(resolve => {
-    chrome.storage.local.get(['settings'], function(data) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['settings'], function (data) {
       resolve(data.settings);
     });
   });
@@ -72,19 +77,22 @@ const getSettings = () => {
 const requestEmulateDevice = async (device) => {
   await sendToBackground({
     action: 'emulate-device',
-    device
+    device,
   });
 
-  window.postMessage(JSON.stringify({ action: 'emulate-device-complete' }), '*');
-}
+  window.postMessage(
+    JSON.stringify({ action: 'emulate-device-complete' }),
+    '*',
+  );
+};
 
-window.addEventListener('message', e => {
+window.addEventListener('message', (e) => {
   try {
     const data = JSON.parse(e.data);
 
     if (data.action == 'ampify-algo') {
       callbacks.onAmpifyComplete();
-      
+
       generateAMP(data);
     } else if (data.action == 'ampify-complete') {
       callbacks.onAmpifyComplete();
@@ -94,7 +102,10 @@ window.addEventListener('message', e => {
       if (!Settings.isLocalMode) {
         requestEmulateDevice(data.device);
       } else {
-        window.postMessage(JSON.stringify({ action: 'emulate-device-complete' }), '*');
+        window.postMessage(
+          JSON.stringify({ action: 'emulate-device-complete' }),
+          '*',
+        );
       }
     }
   } catch (e) {}
@@ -102,19 +113,26 @@ window.addEventListener('message', e => {
 
 const generateAMP = async ({ url, html, cssFilter }) => {
   const res = await reqAmpify({ url, html, cssFilter });
-  
-  if (!res) { return; }
+
+  if (!res) {
+    return;
+  }
 
   const save = await reqSaveAMPResult(res);
 
-  addInlineScript(`window.latest_ampify = ${JSON.stringify({amp: res})}`);
+  addInlineScript(`window.latest_ampify = ${JSON.stringify({ amp: res })}`);
 
-  if (!save) { return; }
+  if (!save) {
+    return;
+  }
 
-  sendToBackground({action: 'open-ampify-tab', url: save.url + '#development=1'});
+  sendToBackground({
+    action: 'open-ampify-tab',
+    url: save.url + '#development=1',
+  });
 
   if (Settings.isReload) {
-    sendToBackground({action: 'reload'});
+    sendToBackground({ action: 'reload' });
   } else {
     console.log('Ampify Completed: ', save.url);
 
@@ -127,29 +145,33 @@ const reqAmpify = async ({ url, html, cssFilter }) => {
     action: 'ajax-request',
     url: Config.AMPIFY_PATH,
     data: JSON.stringify({
-      url, 
-      html, 
+      url,
+      html,
       cssFilter,
       css: {
-        short: !!Settings.isMinify
-      }
-    })
+        short: !!Settings.isMinify,
+      },
+    }),
   });
 
-  if (!res) { return ampifyError(ERRORS.AMPIFY_ALGO_ERROR) };
+  if (!res) {
+    return ampifyError(ERRORS.AMPIFY_ALGO_ERROR);
+  }
 
   return JSON.parse(res).html;
-}
+};
 
-const reqSaveAMPResult = async html => {
+const reqSaveAMPResult = async (html) => {
   const done = await sendToBackground({
     action: 'ajax-request',
     url: Config.AMPIFY_LOCAL_SAVE,
     data: html,
-    contentType: 'text/plain'
+    contentType: 'text/plain',
   });
 
-  if (!done) { return ampifyError(ERRORS.AMPIFY_LOCAL_SAVE); }
+  if (!done) {
+    return ampifyError(ERRORS.AMPIFY_LOCAL_SAVE);
+  }
 
   try {
     return JSON.parse(done);
@@ -163,7 +185,8 @@ const reqSaveAMPResult = async html => {
 const startAmpify = async () => {
   Settings = await getSettings();
 
-  let jsonPath = Settings.ampifyJSON || Config.AMPIFY_LOCAL_JSON, plugins = [];
+  let jsonPath = Settings.ampifyJSON || Config.AMPIFY_LOCAL_JSON,
+    plugins = [];
 
   insertOverlay();
 
@@ -174,25 +197,33 @@ const startAmpify = async () => {
       url: jsonPath,
     });
 
-    if (!jsonStr) { return ampifyError(ERRORS.AMPIFY_LOCAL_JSON); }
+    if (!jsonStr) {
+      return ampifyError(ERRORS.AMPIFY_LOCAL_JSON);
+    }
 
     const json = JSON.parse(jsonStr);
-    plugins = json.dev && json.dev.paths || [];
+    plugins = (json.dev && json.dev.paths) || [];
 
     addInlineScript(`window.__ampify__settings = ${JSON.stringify(Settings)};`);
     addInlineScript(`window.__ampify__json = ${jsonStr};`);
-  
+
     for (const plugin of plugins) {
       const js = await fetchFiles(`${plugin}?r=${Math.random()}`);
 
-      if (!js) { return ampifyError(ERRORS.AMPIFY_LOCAL_PLUGIN_NOT_FOUND, { file: plugin }); }
+      if (!js) {
+        return ampifyError(ERRORS.AMPIFY_LOCAL_PLUGIN_NOT_FOUND, {
+          file: plugin,
+        });
+      }
 
       addInlineScript(js);
     }
   }
 
-  const scripts = await fetchFiles(chrome.runtime.getURL(`js/ampify.js?r=${Math.random()}`));
-  
+  const scripts = await fetchFiles(
+    chrome.runtime.getURL(`js/ampify.js?r=${Math.random()}`),
+  );
+
   addInlineScript(scripts);
 };
 
