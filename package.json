@@ -1,7 +1,9 @@
 {
   "private": true,
   "workspaces": [
-    "projects/*"
+    "projects/*",
+    "packages/*",
+    "sites/*"
   ],
   "scripts": {
     "build-extension": "yarn workspace extension build",
