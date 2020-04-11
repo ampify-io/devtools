@@ -45,6 +45,7 @@ export const fetchFiles = async (...args) => {
 
     const content = await sendToBackground({
       action: 'ajax-request',
+      method: 'get',
       url: file,
     });
 
@@ -185,7 +186,7 @@ const reqSaveAMPResult = async (html) => {
 const startAmpify = async () => {
   Settings = await getSettings();
 
-  let jsonPath = Settings.ampifyJSON || Config.AMPIFY_LOCAL_JSON,
+  let devServPath = Settings.ampifyDevServ || Config.AMPIFY_LOCAL_DEV_SERV,
     plugins = [];
 
   insertOverlay();
@@ -194,15 +195,21 @@ const startAmpify = async () => {
     const jsonStr = await sendToBackground({
       method: 'get',
       action: 'ajax-request',
-      url: jsonPath,
+      url: `${devServPath}/ampify.json`,
     });
 
     if (!jsonStr) {
-      return ampifyError(ERRORS.AMPIFY_LOCAL_JSON);
+      return ampifyError(ERRORS.AMPIFY_LOCAL_DEV_SERV);
     }
 
     const json = JSON.parse(jsonStr);
-    plugins = (json.dev && json.dev.paths) || [];
+    plugins = (json.plugins || []).map(({ name }) => {
+      return `${devServPath}/${name}.js`;
+    });
+
+    if (json.dev && json.dev.paths && json.dev.paths.length) {
+      plugins.push(...json.dev.paths);
+    }
 
     addInlineScript(`window.__ampify__settings = ${JSON.stringify(Settings)};`);
     addInlineScript(`window.__ampify__json = ${jsonStr};`);

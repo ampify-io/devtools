@@ -14,8 +14,8 @@ Settings.init = () => {
   );
   Settings.blockList = document.querySelector('#block-list');
 
-  Settings.jsonBtn = document.querySelector('#add-url-btn');
-  Settings.jsonInp = document.querySelector('#add-url-inp');
+  Settings.devServBtn = document.querySelector('#add-url-btn');
+  Settings.devServInp = document.querySelector('#add-url-inp');
 };
 
 Settings.populate = ({
@@ -25,8 +25,8 @@ Settings.populate = ({
   isRunPlugins,
   isRunPluginsOnly,
   blockList,
-  ampifyJSONList,
-  ampifyJSON,
+  ampifyDevServList,
+  ampifyDevServ,
 }) => {
   Settings.isMinify.checked = isMinify;
   Settings.isAmpify.checked = isAmpify;
@@ -38,7 +38,7 @@ Settings.populate = ({
 
   blockList && (Settings.blockList.value = blockList);
 
-  Settings.populateAmpifyJSON({ ampifyJSONList, ampifyJSON });
+  Settings.populateampifyDevServ({ ampifyDevServList, ampifyDevServ });
 };
 
 Settings.initEvents = () => {
@@ -64,20 +64,20 @@ Settings.initEvents = () => {
     Settings.updateSettings({ blockList: e.target.value }),
   );
 
-  Settings.jsonBtn.addEventListener('click', Settings.addAmpifyJsonItem);
+  Settings.devServBtn.addEventListener('click', Settings.addampifyDevServItem);
 };
 
-Settings.populateAmpifyJSON = ({ ampifyJSONList = [], ampifyJSON }) => {
-  const container = document.querySelector('#ampify-json-urls');
-  const activeUrl = ampifyJSON || Config.AMPIFY_LOCAL_JSON;
+Settings.populateampifyDevServ = ({ ampifyDevServList = [], ampifyDevServ }) => {
+  const container = document.querySelector('#ampify-dev-serv-urls');
+  const activeUrl = ampifyDevServ || Config.AMPIFY_LOCAL_DEV_SERV;
   let html = '';
 
   html += `<div>
     <input type="radio" name="ampify-json" value="" checked>
-    <span>${Config.AMPIFY_LOCAL_JSON} (default)<span>
+    <span>${Config.AMPIFY_LOCAL_DEV_SERV} (default)<span>
   </div>`;
 
-  ampifyJSONList.forEach((url) => {
+  ampifyDevServList.forEach((url) => {
     html += `<div class="item">
       <input type="radio" name="ampify-json" value="${url}" ${
       activeUrl === url ? 'checked' : ''
@@ -94,36 +94,36 @@ Settings.populateAmpifyJSON = ({ ampifyJSONList = [], ampifyJSON }) => {
   container
     .querySelectorAll('.close')
     .forEach((btn) =>
-      btn.addEventListener('click', Settings.removeAmpifyJsonItem),
+      btn.addEventListener('click', Settings.removeampifyDevServItem),
     );
   container
     .querySelectorAll('[name=ampify-json]')
-    .forEach((inp) => inp.addEventListener('change', Settings.setAmpifyJSON));
+    .forEach((inp) => inp.addEventListener('change', Settings.setampifyDevServ));
 };
 
-Settings.setAmpifyJSON = (e) => {
+Settings.setampifyDevServ = (e) => {
   const url = e.target.value;
 
-  Settings.updateSettings({ ampifyJSON: url }, () => {
-    Settings.populateAmpifyJSON(Settings.data);
+  Settings.updateSettings({ ampifyDevServ: url }, () => {
+    Settings.populateampifyDevServ(Settings.data);
   });
 };
 
-Settings.removeAmpifyJsonItem = (e) => {
+Settings.removeampifyDevServItem = (e) => {
   const url = e.target.dataset['url'];
 
   if (confirm(`Remove ${url}?`)) {
-    const urls = Settings.data.ampifyJSONList.filter((u) => u !== url);
+    const urls = Settings.data.ampifyDevServList.filter((u) => u !== url);
 
-    Settings.updateSettings({ ampifyJSONList: urls }, () => {
-      Settings.populateAmpifyJSON(Settings.data);
+    Settings.updateSettings({ ampifyDevServList: urls }, () => {
+      Settings.populateampifyDevServ(Settings.data);
     });
   }
 };
 
-Settings.addAmpifyJsonItem = () => {
-  const url = Settings.jsonInp.value;
-  const urls = Settings.data.ampifyJSONList || [];
+Settings.addampifyDevServItem = () => {
+  const url = Settings.devServInp.value;
+  const urls = Settings.data.ampifyDevServList || [];
 
   if (!url) {
     return;
@@ -134,10 +134,10 @@ Settings.addAmpifyJsonItem = () => {
 
   urls.push(url.trim());
 
-  Settings.updateSettings({ ampifyJSONList: urls }, () => {
-    Settings.jsonInp.value = '';
+  Settings.updateSettings({ ampifyDevServList: urls }, () => {
+    Settings.devServInp.value = '';
 
-    Settings.populateAmpifyJSON(Settings.data);
+    Settings.populateampifyDevServ(Settings.data);
   });
 };
 
