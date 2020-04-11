@@ -1,8 +1,4 @@
 {
-  "packages": [
-    "projects/aquery",
-    "projects/dev-server",
-    "projects/toolbox"
-  ],
+  "packages": ["packages/*"],
   "version": "1.0.1"
 }
