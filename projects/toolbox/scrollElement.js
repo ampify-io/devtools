@@ -1,4 +1,4 @@
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+import delay from './delay';
 
 /**
  *
@@ -15,7 +15,7 @@ const scrollElement = async ({
   step = 300,
   delayMs = 100,
   from = 0,
-  to
+  to,
 } = {}) => {
   const axis = dir === 'bottom' ? 'Height' : 'Width';
 

@@ -1,6 +1,6 @@
 {
   "name": "@ampify/toolbox",
   "version": "0.0.1",
-  "main": "./src",
+  "main": "index.js",
   "license": "MIT"
 }
