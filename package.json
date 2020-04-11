@@ -9,11 +9,18 @@
     "server-start": "yarn workspace server start",
     "static-start": "yarn serve -p 2311"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn pretty-quick --staged"
+    }
+  },
   "devDependencies": {
     "dotenv": "^8.2.0",
+    "husky": "^4.2.5",
     "lerna": "^3.20.2",
     "nodemon": "^2.0.2",
     "prettier": "^2.0.4",
+    "pretty-quick": "^2.0.1",
     "serve": "^11.3.0"
   },
   "name": "devtools"
