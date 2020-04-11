@@ -1,0 +1,4 @@
+{
+  "packages": ["projects/aquery", "projects/dev-server", "projects/toolbox"],
+  "version": "1.0.0"
+}
