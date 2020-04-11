@@ -1,15 +1,13 @@
-const { name } = require('./package');
-const camelCase = require('lodash.camelcase');
-
-const packageName = camelCase(name.replace('@ampify/plugin-', ''));
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    [packageName]: './src/index.js',
+    ampify: './src',
   },
   output: {
     library: '[name]',
     libraryTarget: 'window',
     filename: '[name].js',
   },
+  plugins: [new CopyPlugin([{ from: './src/ampify.json', to: 'ampify.json' }])],
 };

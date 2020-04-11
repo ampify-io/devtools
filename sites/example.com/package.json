@@ -1,13 +1,19 @@
 {
   "name": "example.com",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "scripts": {
     "prebuild": "trash dist",
-    "build": "webpack -d"
+    "build": "webpack -d",
+    "start": "dev-server"
+  },
+  "dependencies": {
+    "@ampify/aquery": "^1.0.0"
   },
   "devDependencies": {
+    "@ampify/dev-server": "^1.0.0",
+    "copy-webpack-plugin": "^5.1.1",
+    "prettier": "^2.0.4",
     "trash-cli": "^3.0.0",
     "webpack": "^4.41.6",
     "webpack-cli": "^3.3.11"

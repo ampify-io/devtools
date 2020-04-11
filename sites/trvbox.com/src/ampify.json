@@ -1,0 +1,10 @@
+{
+  "plugins": [
+    {
+      "name": "trvbox.com"
+    }
+  ],
+  "dev": {
+    "paths": ["http://localhost:2310/trvbox.com.js"]
+  }
+}

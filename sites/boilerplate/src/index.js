@@ -1,3 +1,5 @@
 export default () => {
-  console.log('plugin');
+  const h1 = document.querySelector('h1');
+
+  h1.innerHTML = 'Ampify';
 };
