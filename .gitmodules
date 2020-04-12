@@ -1,0 +1,3 @@
+[submodule "sites/boilerplate"]
+	path = sites/boilerplate
+	url = https://github.com/ampify-io/boilerplate.git
