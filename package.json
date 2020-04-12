@@ -3,7 +3,7 @@
   "workspaces": [
     "projects/*",
     "packages/*",
-    "sites/*"
+    "examples/*"
   ],
   "scripts": {
     "build-extension": "yarn workspace extension build",
