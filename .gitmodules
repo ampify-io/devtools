@@ -1,0 +1,7 @@
+[submodule "projects/boilerplate"]
+	path = projects/boilerplate
+	url = https://github.com/ampify-io/boilerplate.git
+
+[submodule "examples"]
+	path = examples
+	url = https://github.com/ampify-io/examples.git
