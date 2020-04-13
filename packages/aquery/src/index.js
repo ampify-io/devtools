@@ -4,6 +4,7 @@ import injectCss from './utils/addCss';
 import autoComplete from './utils/autoComplete';
 import scrollObserver from './utils/scrollObserver';
 import createScript from './utils/createScript';
+import createForm from './utils/createForm';
 import carousel from './utils/carousel';
 import slider from './utils/slider';
 import ajaxList from './utils/ajaxList';
@@ -323,6 +324,16 @@ const aQuery = (() => {
     script(options = {}) {
       for (const node of this.nodes) {
         createScript(Object.assign({}, options, { container: node }), aQuery);
+      }
+
+      return this;
+    }
+
+    form(options = {}) {
+      for (const node of this.nodes) {
+        if (aQuery(node).is('form')) {
+          createForm(Object.assign({}, options, { form: node }), aQuery);
+        }
       }
 
       return this;
