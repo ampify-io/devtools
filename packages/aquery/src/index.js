@@ -697,7 +697,7 @@ const aQuery = (() => {
 
   const aQuery = (window.aQuery = new Proxy(
     (nodes) => {
-      nodes = jQuery(nodes).toArray();
+      nodes = jQuery(nodes.nodes || nodes).toArray();
 
       if (aQMode == 'events') {
         return (activeAQEvents = new aQueryEvents(nodes));
