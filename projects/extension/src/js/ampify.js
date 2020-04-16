@@ -1,23 +1,18 @@
-import { injectCss, insertOverlay, removeOverlay } from './utils/utils';
-import registerCallback from './utils/callbacks';
+import { injectCss } from './utils/utils';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const emulateDevice = async (device) => {
-  return new Promise((resolve) => {
-    registerCallback({
-      key: 'emulate-device',
-      cb: () => {
-        resolve();
-      },
-    });
+const setSmallDevice = async () => {
+  document.querySelector(':root').classList.add('ampify-small-device');
 
-    window.postMessage(
-      JSON.stringify({ action: 'emulate-device', device }),
-      '*',
-    );
-  });
+  await delay(200);
 };
+
+const removeSmallDevice = async () => {
+  document.querySelector(':root').classList.remove('ampify-small-device');
+
+  await delay(200);
+}
 
 const prepareCSS = () => {
   const sheets = [...document.styleSheets];
@@ -182,16 +177,13 @@ const getHTMLForAmpify = () => {
 
   console.log('[Ampify DevTool] - Ingore Css: ', cssFilter);
 
-  await emulateDevice('IPHONE-5');
-  await delay(100);
-
-  setSizing('small');
-  //sanitaizeViewportMeta
-
-  await emulateDevice('IPHONE-X');
-  await delay(100);
-
   setSizing('large');
+
+  await setSmallDevice();
+  setSizing('small');
+
+  await removeSmallDevice();
+  
   //sanitaizeViewportMeta
 
   //postImage Hook

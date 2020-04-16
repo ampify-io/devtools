@@ -1,7 +1,7 @@
 {
   "name": "Ampify DevTools",
   "short_name": "Ampify DevTools",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "manifest_version": 2,
   "description": "Ampify DevTools",
   "browser_action": {
@@ -15,26 +15,16 @@
   "options_page": "options.html",
   "permissions": [
     "activeTab",
-    "tabs",
+    "storage"
+  ],
+  "optional_permissions": [
     "webRequest",
     "webRequestBlocking",
-    "debugger",
-    "storage",
     "<all_urls>"
   ],
   "background": {
     "scripts": ["js/background.js"]
   },
-  "content_scripts": [
-    {
-      "run_at": "document_end",
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": ["js/content.js"],
-      "css": ["css/style.css"]
-    }
-  ],
   "web_accessible_resources": [
     "static/*",
     "js/*"
