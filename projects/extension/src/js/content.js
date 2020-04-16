@@ -112,8 +112,10 @@ window.addEventListener('message', (e) => {
   } catch (e) {}
 });
 
-const generateAMP = async ({ url, html, cssFilter }) => {
-  const res = await reqAmpify({ url, html, cssFilter });
+const generateAMP = async ({ url, html, cssFilter, settings }) => {
+  insertOverlay();
+
+  const res = await reqAmpify({ url, html, cssFilter, settings });
 
   if (!res) {
     return;
@@ -141,7 +143,7 @@ const generateAMP = async ({ url, html, cssFilter }) => {
   }
 };
 
-const reqAmpify = async ({ url, html, cssFilter }) => {
+const reqAmpify = async ({ url, html, cssFilter, settings }) => {
   const res = await sendToBackground({
     action: 'ajax-request',
     url: Config.AMPIFY_PATH,
@@ -150,7 +152,7 @@ const reqAmpify = async ({ url, html, cssFilter }) => {
       html,
       cssFilter,
       css: {
-        short: !!Settings.isMinify,
+        short: !!Settings.isMinify && !settings.isDisableMinify,
       },
     }),
   });
@@ -188,8 +190,6 @@ const startAmpify = async () => {
 
   let devServPath = Settings.ampifyDevServ || Config.AMPIFY_LOCAL_DEV_SERV,
     plugins = [];
-
-  insertOverlay();
 
   if (Settings.isRunPlugins) {
     const jsonStr = await sendToBackground({

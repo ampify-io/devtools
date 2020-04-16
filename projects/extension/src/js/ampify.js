@@ -166,17 +166,21 @@ const getHTMLForAmpify = () => {
   insertAmpCss();
 
   for (const { name, options = {} } of plugins) {
-    console.log(name, window[name]);
-
     const exec = (window[name] && window[name].default) || window[name];
     if (typeof exec !== 'function') continue;
 
-    const { cssIgnore = [] } = (await exec(options)) || {};
+    const { 
+      cssIgnore = [],
+      debug = {}
+    } = (await exec(options)) || {};
 
     cssFilter.push(...cssIgnore);
+
+    if (debug.convert === false) { settings.isRunPluginsOnly = true; }
+    if (debug.minify === false) { settings.isDisableMinify = true; }
   }
 
-  console.log('after plugins: ', cssFilter);
+  console.log('[Ampify DevTool] - Ingore Css: ', cssFilter);
 
   await emulateDevice('IPHONE-5');
   await delay(100);
@@ -212,11 +216,7 @@ const getHTMLForAmpify = () => {
   prepareCSS();
   prepareHTML();
 
-  removeOverlay();
-
   const html = getHTMLForAmpify();
-
-  insertOverlay();
 
   console.log('Sending html to Ampify  \n ==============================');
 
@@ -226,6 +226,7 @@ const getHTMLForAmpify = () => {
       url: location.href,
       html,
       cssFilter,
+      settings
     }),
     '*',
   );
