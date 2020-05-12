@@ -7,31 +7,18 @@ import {
 import ERRORS from './utils/errors';
 
 const callbacks = {};
-const Config = {};
 
 ampifyError.callbacks = callbacks;
 
-let Settings;
+let Settings, Config;
 
 callbacks.autoInc = 0;
 callbacks.genCallback = () => {
   return `callback_${++callbacks.autoInc}`;
 };
 
-const init = () => {
-  sendToBackground({ action: 'get-config' }).then((data) => {
-    Object.assign(Config, data);
-  });
-};
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action == 'start-ampify') {
-    startAmpify();
-  } else if (request.action == 'ampify-complete') {
-    callbacks.onAmpifyComplete = sendResponse;
-
-    return true;
-  } else if (request.action == 'response-callback') {
+  if (request.action == 'response-callback') {
     callbacks[request.id](request.data);
   }
 });
@@ -75,6 +62,14 @@ const getSettings = () => {
   });
 };
 
+const getConfig = () => {
+  return new Promise((resolve) => {
+    sendToBackground({ action: 'get-config' }).then((data) => {
+      resolve(data);
+    });
+  });
+};
+
 const requestEmulateDevice = async (device) => {
   await sendToBackground({
     action: 'emulate-device',
@@ -92,12 +87,8 @@ window.addEventListener('message', (e) => {
     const data = JSON.parse(e.data);
 
     if (data.action == 'ampify-algo') {
-      callbacks.onAmpifyComplete();
-
       generateAMP(data);
     } else if (data.action == 'ampify-complete') {
-      callbacks.onAmpifyComplete();
-
       removeOverlay();
     } else if (data.action == 'emulate-device') {
       if (!Settings.isLocalMode) {
@@ -155,6 +146,7 @@ const reqAmpify = async ({ url, html, cssFilter, settings }) => {
         short: !!Settings.isMinify && !settings.isDisableMinify,
       },
     }),
+    contentType: 'application/json',
   });
 
   if (!res) {
@@ -169,7 +161,6 @@ const reqSaveAMPResult = async (html) => {
     action: 'ajax-request',
     url: Config.AMPIFY_LOCAL_SAVE,
     data: html,
-    contentType: 'text/plain',
   });
 
   if (!done) {
@@ -187,6 +178,7 @@ const reqSaveAMPResult = async (html) => {
 
 const startAmpify = async () => {
   Settings = await getSettings();
+  Config = await getConfig();
 
   let devServPath = Settings.ampifyDevServ || Config.AMPIFY_LOCAL_DEV_SERV,
     plugins = [];
@@ -195,7 +187,7 @@ const startAmpify = async () => {
     const jsonStr = await sendToBackground({
       method: 'get',
       action: 'ajax-request',
-      url: `${devServPath}/ampify.json`,
+      url: `${devServPath}/ampify.json?r=${Math.random()}`,
     });
 
     if (!jsonStr) {
@@ -234,4 +226,4 @@ const startAmpify = async () => {
   addInlineScript(scripts);
 };
 
-init();
+startAmpify();

@@ -21,6 +21,9 @@ app.use(
   express.static(publicPath, {
     etag: false,
     maxAge: 0,
+    'setHeaders': (res) => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
   }),
 );
 
@@ -30,7 +33,8 @@ app.post('/*.js', async (req, res, next) => {
     'utf-8',
   );
 
-  res.set('Content-Type', 'text/javascript');
+  res.setHeader('Content-Type', 'text/javascript');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.send(file);
 });
 
@@ -42,7 +46,8 @@ app.post('/save', async (req, res, next) => {
       'utf-8',
     );
 
-    await res.json({ url: `http://localhost:${port}/index.html` });
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.json({ url: `http://localhost:${port}/index.html` });
   } catch (e) {
     next(e);
   }

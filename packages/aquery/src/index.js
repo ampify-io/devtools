@@ -357,8 +357,8 @@ const aQuery = (() => {
   }
 
   class aQueryActions {
-    constructor(nodes, parent) {
-      this.parent = parent;
+    constructor(nodes, aQueryEventParent) {
+      this.aQueryEventParent = aQueryEventParent;
       this.nodes = nodes;
 
       for (const node of this.nodes) {
@@ -367,7 +367,31 @@ const aQuery = (() => {
         }
       }
 
-      return this;
+      this.proxy = new Proxy(this, {
+        get(target, prop) {
+          if (target[prop]) {
+            return target[prop];
+          } else if (jQuery.fn[prop]) {
+            return (...args) => {
+              args = args.map((arg) =>
+                arg.__proto__.constructor.name == 'aQueryActions'
+                  ? arg.nodes
+                  : arg,
+              );
+
+              const ret = jQuery(target.nodes)[prop](...args);
+
+              if (ret instanceof jQuery) {
+                return new aQueryActions(ret.toArray());
+              }
+
+              return ret;
+            };
+          }
+        },
+      });
+
+      return this.proxy;
     }
 
     toggle() {
@@ -386,6 +410,9 @@ const aQuery = (() => {
 
     show() {
       for (const node of this.nodes) {
+        //if node is hidden we need to show and and hide it again using hidden attribute
+        if (!node.offsetParent) { jQuery(node).show().attr('hidden', ''); }
+
         arrActions.push(`${genId(node)}.show()`);
       }
 
@@ -510,12 +537,12 @@ const aQuery = (() => {
     }
 
     open(url, target = '_top') {
-      const eventSource = this.parent.nodes[0].matches('select')
+      const eventSource = this.aQueryEventParent.nodes[0].matches('select')
         ? 'select'
         : 'node';
 
       if (eventSource === 'select') {
-        for (const { options } of this.parent.nodes) {
+        for (const { options } of this.aQueryEventParent.nodes) {
           for (const opt of options) {
             if (opt.getAttribute('value')) {
               opt.value = url.replace(AMPlaceHolders.value, opt.value);
@@ -532,36 +559,11 @@ const aQuery = (() => {
         );
       }
     }
-
-    //DOM
-    next() {
-      for (const [i, node] of this.nodes.entries()) {
-        this.nodes[i] = node.nextElementSibling;
-      }
-
-      return this;
-    }
-
-    parentNode() {
-      for (const [i, node] of this.nodes.entries()) {
-        this.nodes[i] = node.parentNode;
-      }
-
-      return this;
-    }
-
-    first() {
-      for (const [i, node] of this.nodes.entries()) {
-        this.nodes[i] = node.firstElementChild;
-      }
-
-      return this;
-    }
   }
 
   class aQueryScrollActions {
-    constructor(nodes, parent) {
-      this.parent = parent;
+    constructor(nodes, aQueryEventParent) {
+      this.aQueryEventParent = aQueryEventParent;
       this.nodes = nodes;
 
       for (const node of this.nodes) {
@@ -715,9 +717,8 @@ const aQuery = (() => {
   ));
 
   aQuery.cssIgnore = (...ignoreList) => {
-    //#TODO - support ids (make class default)
     if (ignoreList.length) {
-      return ignoreList.forEach((ignore) => cssIgnore.add(`.${ignore}`));
+      return ignoreList.forEach((ignore) => cssIgnore.add(`${ignore}`));
     }
 
     return Array.from(cssIgnore).filter(

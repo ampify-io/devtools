@@ -1,7 +1,7 @@
 const defaults = {
-  'submit-error': {color: '#F44336'},
-  'submit-success': {color: '#009688'},
-  'submitting': {color: '#607D8B'}
+  'submit-error': { color: '#F44336' },
+  'submit-success': { color: '#009688' },
+  'submitting': { color: '#607D8B' },
 };
 
 const addMessage = (form, messageId, message) => {
@@ -9,12 +9,20 @@ const addMessage = (form, messageId, message) => {
   const div = document.createElement('div');
 
   div.setAttribute(messageId, '');
-  div.innerHTML = `<template type="amp-mustache"><p style="padding: 1.5rem; direction: ltr; color: ${color}; clear: both;">${message}</p></template>`;
+  div.innerHTML = `
+    <template type="amp-mustache">
+      ${/^\</.test(message) ? message : `<span style="color: ${color}; clear: both;">${message}</span>`}
+    </template>
+  `;
 
   form.appendChild(div);
-}
+};
 
-const createForm = ({ form, url, success, error, submit }, $) => {
+const createForm = ({ form, url, success, error, submit, fields = [] }, $) => {
+  for (const { name, value } of fields) {
+    $(`<input type="hidden" name="${name}" value="${value}" />`).appendTo(form);
+  }
+  
   if (url) {
     form.setAttribute('action', url);
   }
@@ -24,7 +32,7 @@ const createForm = ({ form, url, success, error, submit }, $) => {
   }
 
   if (error) {
-    addMessage(form, 'submit-success', error);
+    addMessage(form, 'submit-error', error);
   }
 
   if (submit) {

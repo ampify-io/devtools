@@ -84,7 +84,7 @@ export const sanitaizeViewportMeta = (step) => {
 export const insertOverlay = () => {
   const div = document.createElement('div');
 
-  div.innerHTML = 'Ampifying...';
+  div.innerHTML = '<span>Ampifying...</span>';
   div.className = 'ampify-devtools-overlay';
 
   document.body.prepend(div);
@@ -107,12 +107,8 @@ export const ampifyError = (err, subs = {}) => {
 
   if (overlay) {
     overlay.classList.add('ampify-devtools-error');
-    overlay.innerHTML = err.replace(/\n/g, '<br>');
+    overlay.innerHTML = '<span>' + err.replace(/\n/g, '<br>') + '</span>';
   }
-
-  try {
-    ampifyError.callbacks.onAmpifyComplete();
-  } catch (e) {}
 
   console.error(err);
 

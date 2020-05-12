@@ -4,35 +4,6 @@ import { getDotEnv } from './utils/utils';
 let lastTabId = null;
 let Settings;
 
-const DEVICES = {
-  'IPHONE-5': {
-    viewPort: {
-      mobile: true,
-      width: 320,
-      height: 568,
-      screenWidth: 320,
-      screenHeight: 568,
-      deviceScaleFactor: 2,
-      fitWindow: true,
-    },
-    userAgent:
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1',
-  },
-  'IPHONE-X': {
-    viewPort: {
-      mobile: true,
-      width: 375,
-      height: 812,
-      screenWidth: 375,
-      screenHeight: 812,
-      deviceScaleFactor: 3,
-      fitWindow: true,
-    },
-    userAgent:
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1',
-  },
-};
-
 const initConfig = async () => {
   const env = await getDotEnv();
 
@@ -66,74 +37,12 @@ const init = async () => {
 };
 
 const startAmpify = (tabId) => {
-  return chrome.tabs.sendMessage(tabId, { action: 'start-ampify' });
-};
-
-const completeAmpify = (tabId) => {
-  return new Promise((resolve) => {
-    chrome.tabs.sendMessage(
-      tabId,
-      { action: 'ampify-complete' },
-      async (response) => {
-        resolve();
-      },
-    );
-  });
-};
-
-const attachDebugger = (tabId) => {
-  return new Promise((resolve) => {
-    chrome.debugger.attach(
-      {
-        tabId,
-      },
-      '1.2',
-      resolve,
-    );
-  });
-};
-
-const detachDebugger = (tabId) => {
-  return new Promise((resolve) => {
-    chrome.debugger.detach(
-      {
-        tabId,
-      },
-      resolve,
-    );
-  });
-};
-
-const setDeviceHeader = (tabId, device) => {
-  return new Promise((resolve) => {
-    chrome.debugger.sendCommand(
-      {
-        tabId,
-      },
-      'Network.setUserAgentOverride',
-      {
-        userAgent: DEVICES[device].userAgent,
-      },
-      resolve,
-    );
-  });
-};
-
-const setDeviceViewPort = (tabId, device) => {
-  return new Promise((resolve) => {
-    chrome.debugger.sendCommand(
-      {
-        tabId,
-      },
-      'Emulation.setDeviceMetricsOverride',
-      DEVICES[device].viewPort,
-      resolve,
-    );
-  });
+  chrome.tabs.insertCSS(tabId, { file: 'css/style.css' });
+  chrome.tabs.executeScript(tabId, { file: 'js/content.js' });
 };
 
 const ajaxRequest = ({
-  contentType = 'application/json',
+  contentType = 'text/plain',
   method = 'post',
   data,
   url,
@@ -156,38 +65,49 @@ const ajaxRequest = ({
   });
 };
 
-chrome.webRequest.onBeforeRequest.addListener(
-  function (details) {
-    const { blockList = [] } = Settings;
+const initBlockUrls = () => {
+  chrome.webRequest.onBeforeRequest.addListener(
+    function (details) {
+      const { blockList = [] } = Settings;
 
-    if (blockList.indexOf(details.url) > -1) {
-      return { cancel: true };
-    }
+      if (blockList.indexOf(details.url) > -1) {
+        return { cancel: true };
+      }
 
-    return { cancel: false };
-  },
-  { urls: ['<all_urls>'] },
-  ['blocking'],
-);
+      return { cancel: false };
+    },
+    { urls: ['<all_urls>'] },
+    ['blocking'],
+  );
 
-chrome.webRequest.onHeadersReceived.addListener(
-  (details) => {
-    if (details.tabId == lastTabId) {
-      details.responseHeaders = details.responseHeaders.filter((header) => {
-        return header.name !== 'Access-Control-Allow-Origin';
-      });
+  chrome.webRequest.onHeadersReceived.addListener(
+    (details) => {
+      if (details.tabId == lastTabId) {
+        details.responseHeaders = details.responseHeaders.filter((header) => {
+          return header.name !== 'Access-Control-Allow-Origin';
+        });
 
-      details.responseHeaders.push({
-        name: 'Access-Control-Allow-Origin',
-        value: '*',
-      });
-    }
+        details.responseHeaders.push({
+          name: 'Access-Control-Allow-Origin',
+          value: '*',
+        });
+      }
 
-    return { responseHeaders: details.responseHeaders };
-  },
-  { urls: ['<all_urls>'] },
-  ['blocking', 'responseHeaders'],
-);
+      return { responseHeaders: details.responseHeaders };
+    },
+    { urls: ['<all_urls>'] },
+    ['blocking', 'responseHeaders'],
+  );
+}
+
+chrome.permissions.contains({
+  permissions: ['webRequest', 'webRequestBlocking'],
+  origins: ['<all_urls>']
+}, granted => {
+  if (granted) {
+    initBlockUrls();
+  }
+});
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action == 'ajax-request') {
@@ -210,14 +130,6 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         id: request.cbid,
       });
     }
-  } else if (request.action == 'emulate-device') {
-    await setDeviceHeader(sender.tab.id, request.device);
-    await setDeviceViewPort(sender.tab.id, request.device);
-
-    chrome.tabs.sendMessage(sender.tab.id, {
-      action: 'response-callback',
-      id: request.cbid,
-    });
   } else if (request.action == 'reload') {
     chrome.tabs.update(sender.tab.id, {
       url: chrome.runtime.getURL(`redirect.html?r=${sender.tab.url}`),
@@ -240,16 +152,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   }
 });
 
-chrome.browserAction.onClicked.addListener(async (tab) => {
+chrome.browserAction.onClicked.addListener((tab) => {
   lastTabId = tab.id;
 
-  await attachDebugger(tab.id);
-
-  await startAmpify(tab.id);
-
-  await completeAmpify(tab.id);
-
-  await detachDebugger(tab.id);
+  startAmpify(tab.id);
 });
 
 init();
