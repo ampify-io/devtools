@@ -8,6 +8,7 @@ import createForm from './utils/createForm';
 import carousel from './utils/carousel';
 import slider from './utils/slider';
 import ajaxList from './utils/ajaxList';
+import triggerTouch from './utils/triggerTouch';
 import genId from './utils/genId';
 import gtag from './utils/gtag';
 
@@ -186,6 +187,8 @@ const aQuery = (() => {
 
               return ret;
             };
+          } else if (target.nodes[prop]) {
+            return target.nodes[prop];
           }
         },
       });
@@ -227,25 +230,28 @@ const aQuery = (() => {
           AMP.appendActions(node, [`${event}:${arrActions.join(',')}`]);
         } else if (event === 'scroll') {
           const exitAction = arrActions.length == 2 ? arrActions.pop() : null;
+          const enter = `calc(100vh + ${/^\d+$/.test(options.enter.toString()) ? options.enter + 'px' : options.enter})`;
 
           const { observer, observee } = scrollObserver(
-            { top: options.enter },
+            { top: enter },
             aQuery,
           );
           const anim = createAnimation({
             selector: `#${genId(observee)}`,
             duration: '0s',
             fill: 'forwards',
-            keyframes: { transform: `translateY(-1000px)` },
+            keyframes: { transform: `translateY(-100000px)` },
           });
 
           arrActions.push(`${anim.id}.start`);
 
           if (options.exit) {
+            const exit = /^\d+$/.test(options.exit.toString()) ? options.exit + 'px' : options.exit;
+
             const {
               observer: observerExit,
               observee: observeeExit,
-            } = scrollObserver({ top: options.exit }, aQuery);
+            } = scrollObserver({ top: exit }, aQuery);
             const animExit = createAnimation({
               selector: `#${genId(observeeExit)}`,
               duration: '0s',
@@ -262,7 +268,7 @@ const aQuery = (() => {
             arrActions.push(`${animExit.id}.start`);
 
             injectCss(`#${observeeExit.id} {
-              transform: translateY(-1000px);
+              transform: translateY(-100000px);
             }`);
 
             AMP.appendActions(observerExit, [
@@ -277,6 +283,14 @@ const aQuery = (() => {
       }
 
       aQMode = 'events';
+    }
+
+    touch() {
+      for (const node of this.nodes) {
+        triggerTouch(node);
+      }
+
+      return this;
     }
 
     hide() {
@@ -534,6 +548,12 @@ const aQuery = (() => {
       }`);
 
       arrActions.push(`${div.id}.scrollTo(duration=${duration})`);
+    }
+
+    scrollTo(duration = 0, position = 'top') {
+      for (const node of this.nodes) {
+        arrActions.push(`${genId(node)}.scrollTo(duration=${duration}, position=${position})`);
+      }
     }
 
     open(url, target = '_top') {

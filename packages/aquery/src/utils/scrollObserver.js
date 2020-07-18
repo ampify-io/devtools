@@ -9,7 +9,6 @@ export default ({ top = '1500px' }, $) => {
     position:absolute;
     left:0;
     top:${top};
-    transform: translateY(0px);
     width:100%;
     height:0px;
   }`);
