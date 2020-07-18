@@ -99,8 +99,8 @@ const prepareHTML = () => {
 
 const setSizing = (size) => {
   const elements = [
-    ...document.querySelectorAll('img, iframe, video'),
-    ...document.querySelectorAll('[style]'),
+    ...document.querySelectorAll('img:not([layout]), iframe:not([layout]), video:not([layout])'),
+    ...document.querySelectorAll('[style]:not([layout])'),
   ];
 
   elements.forEach((el) => {
@@ -128,6 +128,14 @@ const insertBase = () => {
   document.head.prepend(base);
 };
 
+const removeContentPolity = () => {
+  const meta = document.querySelector('meta[http-equiv=Content-Security-Policy]');
+  
+  if (meta) {
+    meta.remove();
+  }
+}
+
 const insertAmpCss = () => {
   injectCss(`
     :root:not(#_) [hidden] {
@@ -138,6 +146,7 @@ const insertAmpCss = () => {
 
 const getHTMLForAmpify = () => {
   insertBase();
+  removeContentPolity();
 
   let html;
 
