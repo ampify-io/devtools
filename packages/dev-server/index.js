@@ -1,4 +1,4 @@
-#!/use/bin/env node
+#!/usr/bin/env node
 
 const express = require('express');
 const morgan = require('morgan');
