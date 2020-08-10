@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/use/bin/env node
 
 const express = require('express');
 const morgan = require('morgan');
@@ -21,9 +21,9 @@ app.use(
   express.static(publicPath, {
     etag: false,
     maxAge: 0,
-    'setHeaders': (res) => {
+    setHeaders: (res) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
-    }
+    },
   }),
 );
 
@@ -56,3 +56,5 @@ app.post('/save', async (req, res, next) => {
 app.listen(port, () => {
   log('server started on port %s', port);
 });
+
+//
