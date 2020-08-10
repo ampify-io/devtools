@@ -1,6 +1,6 @@
 {
   "name": "@ampify/dev-server",
-  "version": "1.2.4",
+  "version": "1.2.7",
   "main": "index.js",
   "bin": {
     "ampify-dev-server": "index.js"
