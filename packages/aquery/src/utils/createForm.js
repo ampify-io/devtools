@@ -1,7 +1,7 @@
 const defaults = {
   'submit-error': { color: '#F44336' },
   'submit-success': { color: '#009688' },
-  'submitting': { color: '#607D8B' },
+  submitting: { color: '#607D8B' },
 };
 
 const addMessage = (form, messageId, message) => {
@@ -11,20 +11,38 @@ const addMessage = (form, messageId, message) => {
   div.setAttribute(messageId, '');
   div.innerHTML = `
     <template type="amp-mustache">
-      ${/^\</.test(message) ? message : `<span style="color: ${color}; clear: both;">${message}</span>`}
+      ${
+        /^\</.test(message)
+          ? message
+          : `<span style="color: ${color}; clear: both;">${message}</span>`
+      }
     </template>
   `;
 
   form.appendChild(div);
 };
 
-const createForm = ({ form, url, success, error, submit, fields = [] }, $) => {
-  for (const { name, value } of fields) {
-    $(`<input type="hidden" name="${name}" value="${value}" />`).appendTo(form);
-  }
-  
+const createForm = (
+  { form, url, proxy, success, error, submit, fields = [], debug },
+  $,
+) => {
   if (url) {
     form.setAttribute('action', url);
+  }
+
+  if (proxy) {
+    const action = new URL(form.getAttribute('action'), location);
+
+    form.setAttribute(
+      'action',
+      window.AMPIFY_DEBUG_PROXY_FORM_URL || '//api.ampify.io/forms',
+    );
+
+    fields.push({ name: 'ampifyProxyAction', value: action });
+  }
+
+  if (debug) {
+    fields.push({ name: 'ampifyProxyDebug', value: 1 });
   }
 
   if (success) {
@@ -36,7 +54,11 @@ const createForm = ({ form, url, success, error, submit, fields = [] }, $) => {
   }
 
   if (submit) {
-    addMessage(form, 'submit', submit);
+    addMessage(form, 'submitting', submit);
+  }
+
+  for (const { name, value } of fields) {
+    $(`<input type="hidden" name="${name}" value="${value}" />`).appendTo(form);
   }
 };
 

@@ -230,12 +230,13 @@ const aQuery = (() => {
           AMP.appendActions(node, [`${event}:${arrActions.join(',')}`]);
         } else if (event === 'scroll') {
           const exitAction = arrActions.length == 2 ? arrActions.pop() : null;
-          const enter = `calc(100vh + ${/^\d+$/.test(options.enter.toString()) ? options.enter + 'px' : options.enter})`;
+          const enter = `calc(100vh + ${
+            /^\d+$/.test(options.enter.toString())
+              ? options.enter + 'px'
+              : options.enter
+          })`;
 
-          const { observer, observee } = scrollObserver(
-            { top: enter },
-            aQuery,
-          );
+          const { observer, observee } = scrollObserver({ top: enter }, aQuery);
           const anim = createAnimation({
             selector: `#${genId(observee)}`,
             duration: '0s',
@@ -246,7 +247,9 @@ const aQuery = (() => {
           arrActions.push(`${anim.id}.start`);
 
           if (options.exit) {
-            const exit = /^\d+$/.test(options.exit.toString()) ? options.exit + 'px' : options.exit;
+            const exit = /^\d+$/.test(options.exit.toString())
+              ? options.exit + 'px'
+              : options.exit;
 
             const {
               observer: observerExit,
@@ -344,6 +347,8 @@ const aQuery = (() => {
     }
 
     form(options = {}) {
+      console.log('zorg', options, createForm);
+
       for (const node of this.nodes) {
         if (aQuery(node).is('form')) {
           createForm(Object.assign({}, options, { form: node }), aQuery);
@@ -425,7 +430,9 @@ const aQuery = (() => {
     show() {
       for (const node of this.nodes) {
         //if node is hidden we need to show and and hide it again using hidden attribute
-        if (!node.offsetParent) { jQuery(node).show().attr('hidden', ''); }
+        if (!node.offsetParent) {
+          jQuery(node).show().attr('hidden', '');
+        }
 
         arrActions.push(`${genId(node)}.show()`);
       }
@@ -552,7 +559,9 @@ const aQuery = (() => {
 
     scrollTo(duration = 0, position = 'top') {
       for (const node of this.nodes) {
-        arrActions.push(`${genId(node)}.scrollTo(duration=${duration}, position=${position})`);
+        arrActions.push(
+          `${genId(node)}.scrollTo(duration=${duration}, position=${position})`,
+        );
       }
     }
 
