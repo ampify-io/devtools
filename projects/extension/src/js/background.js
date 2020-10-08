@@ -2,6 +2,7 @@ import Config from './Config';
 import { getDotEnv } from './utils/utils';
 
 let lastTabId = null;
+let debugTabId = null;
 let Settings;
 
 const initConfig = async () => {
@@ -98,16 +99,19 @@ const initBlockUrls = () => {
     { urls: ['<all_urls>'] },
     ['blocking', 'responseHeaders'],
   );
-}
+};
 
-chrome.permissions.contains({
-  permissions: ['webRequest', 'webRequestBlocking'],
-  origins: ['<all_urls>']
-}, granted => {
-  if (granted) {
-    initBlockUrls();
-  }
-});
+chrome.permissions.contains(
+  {
+    permissions: ['webRequest', 'webRequestBlocking'],
+    origins: ['<all_urls>'],
+  },
+  (granted) => {
+    if (granted) {
+      initBlockUrls();
+    }
+  },
+);
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action == 'ajax-request') {
@@ -141,14 +145,21 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       id: request.cbid,
     });
   } else if (request.action == 'open-ampify-tab') {
-    chrome.tabs.query(
-      { currentWindow: true, url: request.url.replace(/\#.*/, '') + '*' },
-      (tabs) => {
-        if (!tabs.length) {
-          chrome.tabs.create({ url: request.url, index: sender.tab.index + 1 });
-        }
-      },
-    );
+    chrome.tabs.query({}, (tabs) => {
+      const isDebugOpened = tabs.find((tab) => tab.id === debugTabId);
+
+      if (!isDebugOpened) {
+        chrome.tabs.create(
+          { url: request.url, index: sender.tab.index + 1 },
+          (tab) => {
+            debugTabId = tab.id;
+            console.log('created tab', tab);
+          },
+        );
+      } else {
+        chrome.tabs.update(debugTabId, { active: true });
+      }
+    });
   }
 });
 
