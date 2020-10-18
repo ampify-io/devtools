@@ -194,7 +194,7 @@ const aQuery = (() => {
       });
 
       for (const node of this.nodes) {
-        if (node.nodeType === 1) {
+        if (node.nodeType === 1 && node !== document.body) {
           node.setAttribute('ampify-keep', '');
         }
       }
@@ -381,7 +381,7 @@ const aQuery = (() => {
       this.nodes = nodes;
 
       for (const node of this.nodes) {
-        if (node.nodeType === 1) {
+        if (node.nodeType === 1 && node !== document.body) {
           node.setAttribute('ampify-keep', '');
         }
       }
@@ -596,7 +596,7 @@ const aQuery = (() => {
       this.nodes = nodes;
 
       for (const node of this.nodes) {
-        if (node.nodeType === 1) {
+        if (node.nodeType === 1 && node !== document.body) {
           node.setAttribute('ampify-keep', '');
         }
       }
