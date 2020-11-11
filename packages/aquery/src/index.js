@@ -347,8 +347,6 @@ const aQuery = (() => {
     }
 
     form(options = {}) {
-      console.log('zorg', options, createForm);
-
       for (const node of this.nodes) {
         if (aQuery(node).is('form')) {
           createForm(Object.assign({}, options, { form: node }), aQuery);
