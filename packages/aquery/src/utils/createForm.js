@@ -35,7 +35,7 @@ const createForm = (
 
     form.setAttribute(
       'action',
-      window.AMPIFY_DEBUG_PROXY_FORM_URL || '//api.ampify.io/forms',
+      window.AMPIFY_DEBUG_PROXY_FORM_URL || '//proxy.ampify.io/forms',
     );
 
     fields.push({ name: 'ampifyProxyAction', value: action });
