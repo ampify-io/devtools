@@ -1,4 +1,6 @@
-const create = ({ container, items, controls }) => {
+const strategies = { img_src: 'img_src', attr: 'attr', images: 'images' };
+
+const create = ({ container, items, controls, strategy }) => {
   const width = items[0].offsetWidth;
   const height = items[0].offsetHeight;
   const carousel = document.createElement('amp-carousel');
@@ -13,20 +15,26 @@ const create = ({ container, items, controls }) => {
   }
 
   items.forEach((item) => {
-    const div = document.createElement('div');
-
-    div.innerHTML = item.innerHTML;
-
-    carousel.appendChild(div);
+    let element;
+    const strategyKey = strategy ? Object.keys(strategy)[0] : 'img_src';
+    if (strategyKey === strategies.attr) {
+      element = document.createElement('img');
+      const imageSrc = item.getAttribute(strategy.attr);
+      element.setAttribute('src', imageSrc);
+    } else {
+      element = document.createElement('div');
+      element.innerHTML = item.innerHTML;
+    }
+    carousel.appendChild(element);
   });
 
   container.replaceWith(carousel);
 };
 
-export default ({ slides, container }, $) => {
+export default ({ slides, container, controls, strategy }, $) => {
   const items = container.querySelectorAll(slides + ':not(.cloned)');
 
-  create({ container, items });
+  create({ container, items, controls, strategy });
 
   $.injectCss(`
     amp-carousel {
