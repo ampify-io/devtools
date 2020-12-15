@@ -24,5 +24,8 @@
     "pretty-quick": "^2.0.1",
     "serve": "^11.3.0"
   },
-  "name": "devtools"
+  "name": "devtools",
+  "dependencies": {
+    "serialize-javascript": "^4.0.0"
+  }
 }
