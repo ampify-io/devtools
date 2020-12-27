@@ -18,9 +18,11 @@ const create = ({ container, items, controls, strategy }) => {
     let element;
     const strategyKey = strategy ? Object.keys(strategy)[0] : 'img_src';
     if (strategyKey === strategies.attr) {
-      element = document.createElement('img');
+      element = document.createElement('amp-img');
       const imageSrc = item.getAttribute(strategy.attr);
       element.setAttribute('src', imageSrc);
+      element.setAttribute('width', width);
+      element.setAttribute('height', height);
     } else {
       element = document.createElement('div');
       element.innerHTML = item.innerHTML;
