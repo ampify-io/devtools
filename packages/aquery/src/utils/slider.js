@@ -28,9 +28,9 @@ const create = ({ container, items, controls, strategy }, $) => {
       element.setAttribute('layout', 'responsive');
     }
     if (strategy && strategy.display) {
-      element.classList.add(strategy.display);
+      element.classList.add(`ampify-slider-${strategy.display}`);
       $.injectCss(`
-         .${strategy.display} { object-fit: ${strategy.display};  }`);
+         .ampify-slider-${strategy.display} { object-fit: ${strategy.display};  }`);
     }
     carousel.appendChild(element);
   });
