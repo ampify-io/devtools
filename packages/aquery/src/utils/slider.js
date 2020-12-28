@@ -1,6 +1,6 @@
-const strategies = { img_src: 'img_src', attr: 'attr', images: 'images' };
+const strategies = ['img_src', 'attr', 'images'];
 
-const create = ({ container, items, controls, strategy }) => {
+const create = ({ container, items, controls, strategy }, $) => {
   const width = items[0].offsetWidth;
   const height = items[0].offsetHeight;
   const carousel = document.createElement('amp-carousel');
@@ -16,27 +16,31 @@ const create = ({ container, items, controls, strategy }) => {
 
   items.forEach((item) => {
     let element;
-    const strategyKey = strategy ? Object.keys(strategy)[0] : 'img_src';
-    if (strategyKey === strategies.attr) {
+    if (!strategy || strategy.img_src) {
+      element = document.createElement('div');
+      element.innerHTML = item.innerHTML;
+    } else if (strategy.attr) {
       element = document.createElement('amp-img');
       const imageSrc = item.getAttribute(strategy.attr);
       element.setAttribute('src', imageSrc);
       element.setAttribute('width', width);
       element.setAttribute('height', height);
-    } else {
-      element = document.createElement('div');
-      element.innerHTML = item.innerHTML;
+      element.setAttribute('layout', 'responsive');
+    }
+    if (strategy && strategy.display) {
+      element.classList.add(strategy.display);
+      $.injectCss(`
+         .${strategy.display} { object-fit: ${strategy.display};  }`);
     }
     carousel.appendChild(element);
   });
-
   container.replaceWith(carousel);
 };
 
 export default ({ slides, container, controls, strategy }, $) => {
   const items = container.querySelectorAll(slides + ':not(.cloned)');
 
-  create({ container, items, controls, strategy });
+  create({ container, items, controls, strategy }, $);
 
   $.injectCss(`
     amp-carousel {
