@@ -744,15 +744,14 @@ const aQuery = (() => {
   ));
 
   aQuery.cssIgnore = (...ignoreList) => {
-    if (ignoreList.length) {
-      return ignoreList.forEach((ignore) => cssIgnore.add(`${ignore}`));
-    }
+    return ignoreList.forEach((ignore) => cssIgnore.add(`${ignore}`));
+  };
 
+  aQuery.getCssIgnore = () => {
     return Array.from(cssIgnore).filter(
       (ignore) => !/#__ampify__/.test(ignore),
     );
   };
-
   aQuery.injectCss = injectCss;
 
   aQuery.ajaxList = ajaxList;
