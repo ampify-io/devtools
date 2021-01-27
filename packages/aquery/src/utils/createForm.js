@@ -23,7 +23,7 @@ const addMessage = (form, messageId, message) => {
 };
 
 const createForm = (
-  { form, url, proxy, success, error, submit, fields = [], debug },
+  { form, url, proxy, redirect, success, error, submit, fields = [], debug },
   $,
 ) => {
   if (url) {
@@ -39,6 +39,9 @@ const createForm = (
     );
 
     fields.push({ name: 'ampifyProxyAction', value: action });
+    if (redirect) {
+      fields.push({ name: 'redirect', value: redirect });
+    }
   }
 
   if (debug) {
