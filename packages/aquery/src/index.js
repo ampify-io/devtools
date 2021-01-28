@@ -49,6 +49,7 @@ const aQuery = (() => {
 
   const AMPlaceHolders = {
     value: '[AMPIFY_EVENT_VALUE]',
+    checked: '[AMPIFY_EVENT_CHECKED]',
   };
 
   const nodesToArray = (el) => {
@@ -218,7 +219,11 @@ const aQuery = (() => {
       for (const node of this.nodes) {
         arrActions = [];
 
-        callback({ target: node, value: AMPlaceHolders.value });
+        callback({
+          target: node,
+          value: AMPlaceHolders.value,
+          checked: AMPlaceHolders.checked,
+        });
 
         if (event === 'click') {
           node.removeAttribute('href');
@@ -715,7 +720,9 @@ const aQuery = (() => {
       const arrState = [];
 
       Object.keys(state).forEach((prop) => {
-        const value = state[prop].replace(AMPlaceHolders.value, 'event.value');
+        const value = state[prop]
+          .replace(AMPlaceHolders.value, 'event.value')
+          .replace(AMPlaceHolders.checked, 'event.checked');
 
         arrState.push(`${prop}: ${value}`);
       });
