@@ -23,7 +23,18 @@ const addMessage = (form, messageId, message) => {
 };
 
 const createForm = (
-  { form, url, proxy, redirect, success, error, submit, fields = [], debug },
+  {
+    form,
+    url,
+    proxy,
+    redirect,
+    recaptcha,
+    success,
+    error,
+    submit,
+    fields = [],
+    debug,
+  },
   $,
 ) => {
   if (url) {
@@ -41,6 +52,19 @@ const createForm = (
     fields.push({ name: 'ampifyProxyAction', value: action });
     if (redirect) {
       fields.push({ name: 'redirect', value: redirect });
+    }
+    if (recaptcha) {
+      const captcha = form.querySelector(recaptcha);
+      const newCaptcha = document.createElement('amp-recaptcha-input');
+      newCaptcha.setAttribute('layout', 'nodisplay');
+      newCaptcha.setAttribute('name', 'recaptcha_token');
+      //TODO dynamic sitekey
+      newCaptcha.setAttribute(
+        'data-sitekey',
+        '6LdXIUgaAAAAADREPhz4pHolO3617JfN0G-g_VPL',
+      );
+      newCaptcha.setAttribute('data-action', 'recaptcha_example');
+      captcha.parentNode.replaceChild(newCaptcha, captcha);
     }
   }
 
