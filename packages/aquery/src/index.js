@@ -4,7 +4,7 @@ import injectCss from './utils/addCss';
 import autoComplete from './utils/autoComplete';
 import scrollObserver from './utils/scrollObserver';
 import createScript from './utils/createScript';
-import createForm from './utils/createForm';
+import createForm from './utils/form/createForm';
 import carousel from './utils/carousel';
 import slider from './utils/slider';
 import ajaxList from './utils/ajaxList';

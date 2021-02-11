@@ -1,3 +1,5 @@
+import datePicker from './datePicker';
+
 const defaults = {
   'submit-error': { color: '#F44336' },
   'submit-success': { color: '#009688' },
@@ -29,6 +31,7 @@ const createForm = (
     proxy,
     redirect,
     recaptcha,
+    dates,
     success,
     error,
     submit,
@@ -67,7 +70,11 @@ const createForm = (
       captcha.parentNode.replaceChild(newCaptcha, captcha);
     }
   }
-
+  if (dates) {
+    for (const date of dates) {
+      datePicker(date, $);
+    }
+  }
   if (debug) {
     fields.push({ name: 'ampifyProxyDebug', value: 1 });
   }
