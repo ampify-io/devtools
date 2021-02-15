@@ -24,10 +24,6 @@ const addDatePicker = (date, $) => {
       input.removeAttribute('readonly');
       input.setAttribute('required', '');
       datePicker.setAttribute('required', '');
-      const validator = document.createElement('span');
-      validator.setAttribute('visible-when-invalid', 'valueMissing');
-      validator.setAttribute('validation-for', input.id);
-      datePicker.appendChild(validator);
       console.log('addDatePicker ', datePicker);
     }
     const parent = input.parentNode;
