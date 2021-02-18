@@ -4,8 +4,7 @@ const FORMATS = { FORMAT_US: 'MM-DD-YYYY', FORMAT_WORLD: 'DD-MM-YYYY' };
 
 const addDatePicker = (date, $) => {
     if (date) {
-        let mode_pre
-        date.mode ? mode_pre = date.mode : mode_pre = 'lightbox';
+        date.mode = date.mode ? date.mode : 'lightbox';
         const mode = mode_pre;
         const input = date.input;
         if (!input.getAttribute('name')) {
@@ -33,12 +32,12 @@ const addDatePicker = (date, $) => {
             parent.appendChild(datePicker);
             datePicker.appendChild(input);
         } else {
-            var lightboxID = `lb${input.getAttribute('name')}`;
+            const lightboxID = `lb${input.getAttribute('name')}`;
             datePicker.setAttribute('mode', 'static');
             datePicker.setAttribute('layout', 'fixed-height');
             datePicker.setAttribute('height', '360');
-            datePicker.setAttribute('on', `select:${lightboxID}.close`); //Ofek, this doesn't survive minification. maybe I need to use the other method here...
-            input.setAttribute('on', `tap:${lightboxID}.open`); //...but I don't know how. I tried solving it with cssIgnore for the lightboxID. For some reason I don't have cssIgnore in my local aQuery, so it might have solved it, and maybe not...
+            datePicker.setAttribute('on', `select:${lightboxID}.close`);
+            input.setAttribute('on', `tap:${lightboxID}.open`);
             input.setAttribute('tabindex', '0');
             input.setAttribute('role', 'textbox');
             const lightbox = document.createElement('amp-lightbox');
