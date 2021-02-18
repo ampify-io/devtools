@@ -1,6 +1,6 @@
 {
   "name": "@ampify/aquery",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "main": "./dist/aquery.js",
   "module": "./src",
   "license": "MIT",
