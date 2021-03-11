@@ -12,7 +12,7 @@ const removeSmallDevice = async () => {
   document.querySelector(':root').classList.remove('ampify-small-device');
 
   await delay(200);
-}
+};
 
 const prepareCSS = () => {
   const sheets = [...document.styleSheets];
@@ -99,7 +99,9 @@ const prepareHTML = () => {
 
 const setSizing = (size) => {
   const elements = [
-    ...document.querySelectorAll('img:not([layout]), iframe:not([layout]), video:not([layout])'),
+    ...document.querySelectorAll(
+      'img:not([layout]), iframe:not([layout]), video:not([layout])',
+    ),
     ...document.querySelectorAll('[style]:not([layout])'),
   ];
 
@@ -129,12 +131,14 @@ const insertBase = () => {
 };
 
 const removeContentPolity = () => {
-  const meta = document.querySelector('meta[http-equiv=Content-Security-Policy]');
-  
+  const meta = document.querySelector(
+    'meta[http-equiv=Content-Security-Policy]',
+  );
+
   if (meta) {
     meta.remove();
   }
-}
+};
 
 const insertAmpCss = () => {
   injectCss(`
@@ -166,25 +170,28 @@ const getHTMLForAmpify = () => {
     blockFiles = [],
     waitForElement,
   } = config;
-
+  let finalReplace = {};
   insertAmpCss();
 
   for (const { name, options = {} } of plugins) {
     const exec = (window[name] && window[name].default) || window[name];
     if (typeof exec !== 'function') continue;
 
-    const { 
-      cssIgnore = [],
-      debug = {}
-    } = (await exec(options)) || {};
-
+    const { cssIgnore = [], debug = {}, replace = {} } =
+      (await exec(options)) || {};
+    Object.assign(finalReplace, replace);
     cssFilter.push(...cssIgnore);
 
-    if (debug.convert === false) { settings.isRunPluginsOnly = true; }
-    if (debug.minify === false) { settings.isDisableMinify = true; }
+    if (debug.convert === false) {
+      settings.isRunPluginsOnly = true;
+    }
+    if (debug.minify === false) {
+      settings.isDisableMinify = true;
+    }
   }
 
-  console.log('[Ampify DevTool] - Ingore Css: ', cssFilter);
+  console.log('[Ampify DevTool] - Ignore Css: ', cssFilter);
+  console.log('[Ampify DevTool] - Replace Css: ', finalReplace);
 
   setSizing('large');
 
@@ -192,7 +199,7 @@ const getHTMLForAmpify = () => {
   setSizing('small');
 
   await removeSmallDevice();
-  
+
   //sanitaizeViewportMeta
 
   //postImage Hook
@@ -227,7 +234,8 @@ const getHTMLForAmpify = () => {
       url: location.href,
       html,
       cssFilter,
-      settings
+      settings,
+      replace: finalReplace,
     }),
     '*',
   );
