@@ -1,5 +1,6 @@
 import jQuery from 'jquery';
 import cssIgnore from './utils/cssIgnore';
+import cssReplace from './utils/replace';
 import injectCss from './utils/addCss';
 import autoComplete from './utils/autoComplete';
 import scrollObserver from './utils/scrollObserver';
@@ -758,6 +759,12 @@ const aQuery = (() => {
     return Array.from(cssIgnore).filter(
       (ignore) => !/#__ampify__/.test(ignore),
     );
+  };
+  aQuery.cssReplace = (replace) => {
+    Object.assign(cssReplace, replace);
+  };
+  aQuery.getCssReplace = () => {
+    return cssReplace;
   };
   aQuery.injectCss = injectCss;
 

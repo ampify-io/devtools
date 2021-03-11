@@ -103,10 +103,10 @@ window.addEventListener('message', (e) => {
   } catch (e) {}
 });
 
-const generateAMP = async ({ url, html, cssFilter, settings }) => {
+const generateAMP = async ({ url, html, cssFilter, replace, settings }) => {
   insertOverlay();
 
-  const res = await reqAmpify({ url, html, cssFilter, settings });
+  const res = await reqAmpify({ url, html, cssFilter, replace, settings });
 
   if (!res) {
     return;
@@ -134,7 +134,7 @@ const generateAMP = async ({ url, html, cssFilter, settings }) => {
   }
 };
 
-const reqAmpify = async ({ url, html, cssFilter, settings }) => {
+const reqAmpify = async ({ url, html, cssFilter, replace, settings }) => {
   const res = await sendToBackground({
     action: 'ajax-request',
     url: Config.AMPIFY_PATH,
@@ -142,6 +142,7 @@ const reqAmpify = async ({ url, html, cssFilter, settings }) => {
       url,
       html,
       cssFilter,
+      replace,
       css: {
         short: !!Settings.isMinify && !settings.isDisableMinify,
       },
