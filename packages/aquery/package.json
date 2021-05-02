@@ -1,13 +1,13 @@
 {
   "name": "@ampify/aquery",
-  "version": "1.5.1",
+  "version": "1.5.0",
   "main": "./dist/aquery.js",
   "module": "./src",
   "license": "MIT",
   "scripts": {
     "prebuild": "trash dist",
     "build-dev": "webpack -d",
-    "build": "webpack -p",
+    "build": "webpack --mode production",
     "test": "jest",
     "prepublish": "yarn build"
   },
