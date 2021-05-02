@@ -4,6 +4,11 @@ const camelCase = require('lodash.camelcase');
 const packageName = camelCase(name.replace('@ampify/plugin-', ''));
 
 module.exports = {
+  resolve: {
+    fallback: {
+      crypto: false,
+    },
+  },
   entry: {
     [packageName]: './src',
   },
