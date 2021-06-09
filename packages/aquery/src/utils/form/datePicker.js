@@ -50,7 +50,7 @@ const addDatePicker = (date, $) => {
       document.querySelector('body').append(lightbox);
 
       $.injectCss(`
-            amp-lightbox {background-color: rgba(0 0 0 / 50%);}
+            amp-lightbox {background-color: rgba(0 0 0 / 50%); z-index: 999999999999 !important;}
             amp-lightbox > div {padding-top:35%;}
             amp-lightbox .align-content-center {width:318px; margin:auto}
             amp-lightbox button.lb_close {font-size:20px;color:white;margin-bottom:5px;background-color:transparent;position:absolute!important;right:20px!important;top:20px!important;}
