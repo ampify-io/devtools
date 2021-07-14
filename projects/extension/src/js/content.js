@@ -105,13 +105,12 @@ window.addEventListener('message', (e) => {
 
 const generateAMP = async ({ url, html, cssFilter, replace, settings }) => {
   insertOverlay();
-  console.log('Starting Ampify:');
   const res = await reqAmpify({ url, html, cssFilter, replace, settings });
 
   if (!res) {
     return;
   }
-  console.log('Finished Ampify, stats: ', res.stats);
+  console.log('css size: ', res?.stats?.css?.optimized);
   const amp = res.html;
   const save = await reqSaveAMPResult(amp);
 
@@ -155,7 +154,6 @@ const reqAmpify = async ({ url, html, cssFilter, replace, settings }) => {
     return ampifyError(ERRORS.AMPIFY_ALGO_ERROR);
   }
   const json = JSON.parse(res);
-  console.log(`Stats: ${json.stats}`);
   return json;
 };
 
