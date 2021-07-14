@@ -110,7 +110,7 @@ const generateAMP = async ({ url, html, cssFilter, replace, settings }) => {
   if (!res) {
     return;
   }
-  console.log('css size: ', res?.stats?.css?.optimized);
+  console.log('css size: ', res.stats.css.optimized);
   const amp = res.html;
   const save = await reqSaveAMPResult(amp);
 
