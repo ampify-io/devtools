@@ -1,8 +1,8 @@
 import {
   addInlineScript,
+  ampifyError,
   insertOverlay,
   removeOverlay,
-  ampifyError,
 } from './utils/utils';
 import ERRORS from './utils/errors';
 
@@ -110,7 +110,7 @@ const generateAMP = async ({ url, html, cssFilter, replace, settings }) => {
   if (!res) {
     return;
   }
-  console.log('css size: ', res?.stats?.css?.optimized);
+  console.log('css size: ', res.stats.css.optimized);
   const amp = res.html;
   const save = await reqSaveAMPResult(amp);
 
@@ -153,8 +153,7 @@ const reqAmpify = async ({ url, html, cssFilter, replace, settings }) => {
   if (!res) {
     return ampifyError(ERRORS.AMPIFY_ALGO_ERROR);
   }
-  const json = JSON.parse(res);
-  return json;
+  return JSON.parse(res);
 };
 
 const reqSaveAMPResult = async (html) => {
