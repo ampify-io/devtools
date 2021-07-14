@@ -153,7 +153,7 @@ const reqAmpify = async ({ url, html, cssFilter, replace, settings }) => {
   if (!res) {
     return ampifyError(ERRORS.AMPIFY_ALGO_ERROR);
   }
-
+  console.log(`Stats: ${res.stats}`);
   return JSON.parse(res).html;
 };
 
