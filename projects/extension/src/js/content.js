@@ -105,16 +105,17 @@ window.addEventListener('message', (e) => {
 
 const generateAMP = async ({ url, html, cssFilter, replace, settings }) => {
   insertOverlay();
-
+  console.log('Starting Ampify:');
   const res = await reqAmpify({ url, html, cssFilter, replace, settings });
 
   if (!res) {
     return;
   }
+  console.log('Finished Ampify, stats: ', res.stats);
+  const amp = res.html;
+  const save = await reqSaveAMPResult(amp);
 
-  const save = await reqSaveAMPResult(res);
-
-  addInlineScript(`window.latest_ampify = ${JSON.stringify({ amp: res })}`);
+  addInlineScript(`window.latest_ampify = ${JSON.stringify({ amp })}`);
 
   if (!save) {
     return;
@@ -153,8 +154,9 @@ const reqAmpify = async ({ url, html, cssFilter, replace, settings }) => {
   if (!res) {
     return ampifyError(ERRORS.AMPIFY_ALGO_ERROR);
   }
-  console.log(`Stats: ${res.stats}`);
-  return JSON.parse(res).html;
+  const json = JSON.parse(res);
+  console.log(`Stats: ${json.stats}`);
+  return json;
 };
 
 const reqSaveAMPResult = async (html) => {
