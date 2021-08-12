@@ -57,15 +57,12 @@ const createForm = (
       fields.push({ name: 'redirect', value: redirect });
     }
     if (recaptcha) {
-      const captcha = form.querySelector(recaptcha);
+      const captcha = form.querySelector(recaptcha[0]);
       const newCaptcha = document.createElement('amp-recaptcha-input');
       newCaptcha.setAttribute('layout', 'nodisplay');
       newCaptcha.setAttribute('name', 'recaptcha_token');
       //TODO dynamic sitekey
-      newCaptcha.setAttribute(
-        'data-sitekey',
-        '6LdXIUgaAAAAADREPhz4pHolO3617JfN0G-g_VPL',
-      );
+      newCaptcha.setAttribute('data-sitekey', recaptcha[1]);
       newCaptcha.setAttribute('data-action', 'recaptcha_example');
       captcha.parentNode.replaceChild(newCaptcha, captcha);
     }
