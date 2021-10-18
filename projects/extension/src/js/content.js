@@ -111,10 +111,11 @@ const generateAMP = async ({ url, html, cssFilter, replace, settings }) => {
   if (!res) {
     return;
   }
-
+  console.log('css size: ', res.stats.css.optimized);
+  const amp = res.html;
   const save = await reqSaveAMPResult(res);
 
-  addInlineScript(`window.latest_ampify = ${JSON.stringify({ amp: res })}`);
+  addInlineScript(`window.latest_ampify = ${JSON.stringify({ amp })}`);
 
   if (!save) {
     return;
@@ -154,7 +155,7 @@ const reqAmpify = async ({ url, html, cssFilter, replace, settings }) => {
     return ampifyError(ERRORS.AMPIFY_ALGO_ERROR);
   }
 
-  return JSON.parse(res).html;
+  return JSON.parse(res);
 };
 
 const reqSaveAMPResult = async (html) => {

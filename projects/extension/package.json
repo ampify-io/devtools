@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "trash extension/js",
-    "build": "webpack -d"
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
