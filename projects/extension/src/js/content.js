@@ -113,7 +113,7 @@ const generateAMP = async ({ url, html, cssFilter, replace, settings }) => {
   }
   console.log('css size: ', res.stats.css.optimized);
   const amp = res.html;
-  const save = await reqSaveAMPResult(res);
+  const save = await reqSaveAMPResult(amp);
 
   addInlineScript(`window.latest_ampify = ${JSON.stringify({ amp })}`);
 
